@@ -20,3 +20,24 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.route('/')
+def home():
+    return redirect(url_for('login'))
+
+@app.route('/register', methods= ['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'])
+        role = request.form.get('role', 'member')
+        if User.query.filter_by(username = username).first(): 
+            flash('Nome de usuário já existe!', 'danger')
+            return redirect(url_for('register'))
+
+        new_user = User(username = username, password = password, role = role )
+        db.session.add(new_user)
+        db.session.commit()
+        flash ('Registrou com sucesso!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
