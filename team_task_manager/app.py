@@ -41,3 +41,9 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    my_tasks = Task.query.filter_by(created_by = current_user.id).all()
+    shared_tasks = Task.query.filter_by(shared_with = current_user.id).all()
+    return render_template('dashboard.html', my_tasks = my_tasks, shared_tasks = shared_tasks)
