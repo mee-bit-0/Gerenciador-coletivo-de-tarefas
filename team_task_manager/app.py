@@ -20,9 +20,13 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Rota padrão
+
 @app.route('/')
 def home():
     return redirect(url_for('login'))
+
+# Registro
 
 @app.route('/register', methods= ['GET', 'POST'])
 def register():
@@ -41,9 +45,20 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
-@app.route('/dashboard')
+# Dashboards
+
+@app.route('/dashboard') 
 @login_required
 def dashboard():
     my_tasks = Task.query.filter_by(created_by = current_user.id).all()
     shared_tasks = Task.query.filter_by(shared_with = current_user.id).all()
     return render_template('dashboard.html', my_tasks = my_tasks, shared_tasks = shared_tasks)
+
+@app.route('/admin')
+@login_required
+def admin_dashboard():
+    if current_user.role != 'admin':
+        flash('Acesso negado', 'danger')
+        return redirect(url_for('dashboard'))
+        tasks = Task.query.all()
+        return render_template('admin_dashboard.html', tasks = tasks)
