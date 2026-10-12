@@ -147,3 +147,20 @@ def edit_task(task_id):
 
     users = User.query.filter(User.id != task.created_by).all()
     return render_template('add_task.html', task = task, users = users)
+
+# Rota deletar tarefa
+
+@app.route('/delete/<int:task_id>', methods=['POST'])
+@login_required
+def delete_task(task_id):
+    
+    task = Task.query.get_or_404(task_id)
+
+    if task.created_by != current_user.id and current_user.role != 'admin':
+        flash('Acesso negado', 'danger')
+        return redirect(url_for('dashboard'))
+
+    db.session.delete(task)
+    db.session.commit()
+    flash('Tarefa deletada!', 'success')
+    return redirect(url_for('dashboard'))
