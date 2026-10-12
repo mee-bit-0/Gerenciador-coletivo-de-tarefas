@@ -88,3 +88,29 @@ def admin_dashboard():
         return redirect(url_for('dashboard'))
         tasks = Task.query.all()
         return render_template('admin_dashboard.html', tasks = tasks)
+
+#Rota adicionar    
+
+@app.route('/add', methods=['GET', 'POST'])
+@login_required
+def add_task():
+    if request.method == 'POST':
+        title = request.form['title'].strip()
+        description = request.form['description'].strip()
+        priority = request.form.get('priority', 'Baixa')
+        shared_with_id = request.form.get('shared_with')
+
+        if not title or not description or not shared_with_id:
+            flash('Preencha todos os campos!', 'danger')
+            return redirect(url_for('add_task'))
+
+        new_task = Task(title = title, description = description, priority = priority, created_by = current_user.id, shared_with = int(shared_with_id))
+
+        db.session.add(new_task)
+        db.session.commit()
+
+        flash('Task adicionada!', 'success')
+        return redirect(url_for('dashboard'))
+
+    users = User.query.filter(User.id != current_user.id).all()
+    return render_template('add_task.html', users = users)    
