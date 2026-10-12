@@ -37,6 +37,15 @@ def login():
 
     return render_template('login.html')
 
+# Rota Logout
+
+@app.route('/logout')      
+@login_required # só quem está logado pode usar
+def logout():
+    logout_user() # apaga a sessão do usuário atual
+    flash('Você saiu da conta.', 'success')  # mensagem que aparece na próxima tela
+    return redirect(url_for('login')) # manda o usuário de volta pra tela de login
+
 # Rota padrão
 
 @app.route('/')
