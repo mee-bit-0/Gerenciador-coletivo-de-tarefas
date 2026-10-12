@@ -139,7 +139,7 @@ def edit_task(task_id):
         flash('Tarefa atualizada!', 'success')
         return redirect(url_for('dashboard'))
 
-    return render_template('add_task.html')
+    return render_template('add_task.html', task = task)
 
 # Rota deletar tarefa
 
