@@ -89,7 +89,7 @@ def admin_dashboard():
         tasks = Task.query.all()
         return render_template('admin_dashboard.html', tasks = tasks)
 
-#Rota adicionar    
+# Rota adicionar    
 
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -114,3 +114,36 @@ def add_task():
 
     users = User.query.filter(User.id != current_user.id).all()
     return render_template('add_task.html', users = users)    
+
+# Rota editar tarefa
+
+@app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
+@login_required
+def edit_task(task_id):
+
+    task = Task.query.get_or_404(task_id)
+
+    if task.created_by != current_user.id and current_user.role != 'admin':
+        flash('Acesso negado', 'danger')
+        return redirect(url_for('dashboard'))
+
+    if request.method == 'POST':
+        title = request.form['title'].strip()
+        description = request.form['description'].strip()
+        shared_with_id = request.form.get('shared_with')
+
+        if not title or not description or not shared_with_id:
+            flash('Preencha todos os campos!', 'danger')
+            return redirect(url_for('edit_task', task_id = task.id))
+
+        task.title = title
+        task.description = description
+        task.priority = request.form.get('priority', task.priority)
+        task.status = request.form.get('status', task.status)
+        task.shared_with = int(shared_with_id)
+        db.session.commit()
+        flash('Tarefa atualizada!', 'success')
+        return redirect(url_for('dashboard'))
+
+    users = User.query.filter(User.id != task.created_by).all()
+    return render_template('add_task.html', task = task, users = users)
