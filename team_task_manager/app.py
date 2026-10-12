@@ -129,18 +129,14 @@ def edit_task(task_id):
 
     if request.method == 'POST':
         title = request.form['title'].strip()
-        description = request.form['description'].strip()
-        shared_with_id = request.form.get('shared_with')
-
-        if not title or not description or not shared_with_id:
+        
+        if not title:
             flash('Preencha todos os campos!', 'danger')
             return redirect(url_for('edit_task', task_id = task.id))
 
         task.title = title
-        task.description = description
         task.priority = request.form.get('priority', task.priority)
         task.status = request.form.get('status', task.status)
-        task.shared_with = int(shared_with_id)
         db.session.commit()
         flash('Tarefa atualizada!', 'success')
         return redirect(url_for('dashboard'))
