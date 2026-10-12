@@ -20,6 +20,23 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Rota Login
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username = username).first()
+
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return redirect(url_for('admin_dashboard' if user.role == 'admin' else 'dashboard'))
+
+        flash('Credenciais inválidas', 'danger')
+
+    return render_template('login.html')
+
 # Rota padrão
 
 @app.route('/')
