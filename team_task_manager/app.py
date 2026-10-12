@@ -98,13 +98,12 @@ def add_task():
         title = request.form['title'].strip()
         description = request.form['description'].strip()
         priority = request.form.get('priority', 'Baixa')
-        shared_with_id = request.form.get('shared_with')
 
-        if not title or not description or not shared_with_id:
-            flash('Preencha todos os campos!', 'danger')
+        if not title:
+            flash('O nome da tarefa é obrigatório!', 'danger')
             return redirect(url_for('add_task'))
 
-        new_task = Task(title = title, description = description, priority = priority, created_by = current_user.id, shared_with = int(shared_with_id))
+        new_task = Task(title = title, description = description, priority = priority, created_by = current_user.id)
 
         db.session.add(new_task)
         db.session.commit()
@@ -112,8 +111,7 @@ def add_task():
         flash('Task adicionada!', 'success')
         return redirect(url_for('dashboard'))
 
-    users = User.query.filter(User.id != current_user.id).all()
-    return render_template('add_task.html', users = users)    
+    return render_template('add_task.html')    
 
 # Rota editar tarefa
 
@@ -141,8 +139,7 @@ def edit_task(task_id):
         flash('Tarefa atualizada!', 'success')
         return redirect(url_for('dashboard'))
 
-    users = User.query.filter(User.id != task.created_by).all()
-    return render_template('add_task.html', task = task, users = users)
+    return render_template('add_task.html')
 
 # Rota deletar tarefa
 
