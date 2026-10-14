@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Deletar tarefa{% endblock %}
+
+{% block content %}
+<h1>Deletar tarefa</h1>
+
+<p>Tem certeza que deseja deletar a tarefa <strong>{{ task.title }}</strong>?</p>
+<p>Essa ação não pode ser desfeita.</p>
+
+<form action="{{ url_for('delete_task', task_id = task.id) }}" method="POST">
+    <button type="submit">Sim, deletar</button>
+    <a href="{{ url_for('dashboard') }}">Cancelar</a>
+</form>
+{% endblock %}

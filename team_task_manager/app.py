@@ -143,7 +143,7 @@ def edit_task(task_id):
 
 # Rota deletar tarefa
 
-@app.route('/delete/<int:task_id>', methods=['POST'])
+@app.route('/delete/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def delete_task(task_id):
     
