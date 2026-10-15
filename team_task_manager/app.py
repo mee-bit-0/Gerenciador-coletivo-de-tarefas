@@ -21,7 +21,6 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # Rota Login
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -38,7 +37,6 @@ def login():
     return render_template('login.html')
 
 # Rota Logout
-
 @app.route('/logout')      
 @login_required # só quem está logado pode usar
 def logout():
@@ -47,13 +45,11 @@ def logout():
     return redirect(url_for('login')) # manda o usuário de volta pra tela de login
 
 # Rota padrão
-
 @app.route('/')
 def home():
     return redirect(url_for('login'))
 
 # Registro
-
 @app.route('/register', methods= ['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -72,7 +68,6 @@ def register():
     return render_template('register.html')
 
 # Dashboards
-
 @app.route('/dashboard') 
 @login_required
 def dashboard():
@@ -90,7 +85,6 @@ def admin_dashboard():
         return render_template('admin_dashboard.html', tasks = tasks)
 
 # Rota adicionar    
-
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -114,7 +108,6 @@ def add_task():
     return render_template('add_task.html')    
 
 # Rota editar tarefa
-
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
@@ -142,7 +135,6 @@ def edit_task(task_id):
     return render_template('add_task.html', task = task)
 
 # Rota deletar tarefa
-
 @app.route('/delete/<int:task_id>', methods=['POST'])
 @login_required
 def delete_task(task_id):
