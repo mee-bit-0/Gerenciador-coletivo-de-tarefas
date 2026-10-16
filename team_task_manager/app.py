@@ -18,7 +18,7 @@ login_manager.login_view = 'login'
 # Carrega usuários
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    db.session.get(User, int(user_id))
 
 # Rota Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -85,8 +85,8 @@ def admin_dashboard():
     if current_user.role != 'admin':
         flash('Acesso negado', 'danger')
         return redirect(url_for('dashboard'))
-        tasks = Task.query.all()
-        return render_template('admin_dashboard.html', tasks = tasks)
+    tasks = Task.query.all()
+    return render_template('admin_dashboard.html', tasks = tasks)
 
 # Rota adicionar    
 
@@ -118,7 +118,7 @@ def add_task():
 @login_required
 def edit_task(task_id):
 
-    task = Task.query.get_or_404(task_id)
+    task = db.get_or_404(Task, task_id)
 
     if task.created_by != current_user.id and current_user.role != 'admin':
         flash('Acesso negado', 'danger')
@@ -142,7 +142,7 @@ def edit_task(task_id):
 
 # Rota deletar tarefa
 
-@app.route('/delete/<int:task_id>', methods=['GET', 'POST'])
+@app.route('/delete/<int:task_id>', methods=['POST'])
 @login_required
 def delete_task(task_id):
     
@@ -156,3 +156,9 @@ def delete_task(task_id):
     db.session.commit()
     flash('Tarefa deletada!', 'success')
     return redirect(url_for('dashboard'))
+
+#
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
