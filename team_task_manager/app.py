@@ -21,7 +21,6 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # Rota Login
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
