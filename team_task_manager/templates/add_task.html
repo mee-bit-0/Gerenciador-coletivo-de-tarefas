@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block content % }
-<h2>Add Task</h2>
+{% block content %}
+<h2>Nova Tarefa</h2>
 <form method="POST">
     <div class="mb-3">
         <label>Title</label>
@@ -18,6 +18,6 @@
             {% endfor %}
         </select>
     </div>
-    <button class="btn btn-primary">Add Task</button>
+    <button class="btn btn-primary">Adicionar tarefa</button>
 </form>
 {% endblock %}

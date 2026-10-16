@@ -18,7 +18,17 @@ login_manager.login_view = 'login'
 # Carrega usuários
 @login_manager.user_loader
 def load_user(user_id):
+    user = db.session.get(User, int(user_id))
+    print('user_loader:', user_id, '->', user)
+    return user
+#@login_manager.user_loader
+#def load_user(user_id):
     db.session.get(User, int(user_id))
+
+# Rota padrão
+@app.route('/')
+def home():
+    return redirect(url_for('login'))
 
 # Rota Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -29,30 +39,16 @@ def login():
         user = User.query.filter_by(username = username).first()
 
         if user and check_password_hash(user.password, password):
-            login_user(user)
+            #login_user(user)
+            ok = login_user(user)
+            print('login_user retornou:', ok)
             return redirect(url_for('admin_dashboard' if user.role == 'admin' else 'dashboard'))
 
         flash('Credenciais inválidas', 'danger')
 
     return render_template('login.html')
 
-# Rota Logout
-
-@app.route('/logout')      
-@login_required # só quem está logado pode usar
-def logout():
-    logout_user() # apaga a sessão do usuário atual
-    flash('Você saiu da conta.', 'success')  # mensagem que aparece na próxima tela
-    return redirect(url_for('login')) # manda o usuário de volta pra tela de login
-
-# Rota padrão
-
-@app.route('/')
-def home():
-    return redirect(url_for('login'))
-
-# Registro
-
+# Rota registro
 @app.route('/register', methods= ['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -70,8 +66,16 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
-# Dashboards
+# Rota Logout
+@app.route('/logout')      
+@login_required # só quem está logado pode usar
+def logout():
+    logout_user() # apaga a sessão do usuário atual
+    flash('Você saiu da conta.', 'success')  # mensagem que aparece na próxima tela
+    return redirect(url_for('login')) # manda o usuário de volta pra tela de login
 
+
+# Dashboards
 @app.route('/dashboard') 
 @login_required
 def dashboard():
@@ -86,10 +90,9 @@ def admin_dashboard():
         flash('Acesso negado', 'danger')
         return redirect(url_for('dashboard'))
     tasks = Task.query.all()
-    return render_template('admin_dashboard.html', tasks = tasks)
+    return render_template('dashboard.html', tasks = tasks)
 
 # Rota adicionar    
-
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -113,7 +116,6 @@ def add_task():
     return render_template('add_task.html')    
 
 # Rota editar tarefa
-
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
@@ -141,7 +143,6 @@ def edit_task(task_id):
     return render_template('add_task.html', task = task)
 
 # Rota deletar tarefa
-
 @app.route('/delete/<int:task_id>', methods=['POST'])
 @login_required
 def delete_task(task_id):
