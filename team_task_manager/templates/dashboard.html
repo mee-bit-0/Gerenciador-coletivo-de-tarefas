@@ -4,9 +4,18 @@
 <h2>Your Tasks</h2>
 <ul class="list-group">
     {% for task in my_tasks %}
+    
+    
+        <div class="card-tarefa">
         <li class="list-group-item">
             <strong>{{ task.title }}</strong> - {{ task.status }} - {{task.priority}}
-            <a href="{{ url_for('edit_task', task_id=task.id) }}" class="botao tarefa">Edit</a>
+            <!--<a href="{{ url_for('edit_task', task_id=task.id) }}" class="botao tarefa">Edit</a>-->
+
+            <!-- botao editar -->
+            <form action="{{ url_for('edit_task', task_id=task.id) }}" method="get">
+                <button type="submit" class="edit">Editar</button>
+            </form>
+
 
             <!-- botao excluir -->
             <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post">
@@ -15,6 +24,7 @@
 
             
         </li>
+        </div>
     {% endfor %}
 </ul>
 

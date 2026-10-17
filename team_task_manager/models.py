@@ -17,4 +17,4 @@ class Task(db.Model):
     status = db.Column(db.String(20), default = 'Pendente')
     priority = db.Column(db.String(20), default = 'Baixa')
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
-    shared_with = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False, default='current_user.id')
+    shared_with = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = True)
