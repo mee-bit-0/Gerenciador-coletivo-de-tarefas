@@ -1,6 +1,6 @@
 from extensions import db
 from flask_login import UserMixin
-from datetime import date, datetime, timezone
+from datetime import date, timezone
 
 
 
