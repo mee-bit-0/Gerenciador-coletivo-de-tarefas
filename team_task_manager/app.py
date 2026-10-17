@@ -92,7 +92,7 @@ def admin_dashboard():
     tasks = Task.query.all()
     return render_template('dashboard.html', tasks = tasks)
 
-# Rota adicionar    
+# Rota adicionar--------------------------------------------------------------------------------------------------------------    
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -115,7 +115,7 @@ def add_task():
 
     return render_template('add_task.html')    
 
-# Rota editar tarefa
+# Rota editar tarefa-------------------------------------------------------------------------------------------------------------
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
@@ -140,7 +140,7 @@ def edit_task(task_id):
         flash('Tarefa atualizada!', 'success')
         return redirect(url_for('dashboard'))
 
-    return render_template('add_task.html', task = task)
+    return render_template('edit_task.html', task = task)
 
 # Rota deletar tarefa
 @app.route('/delete/<int:task_id>', methods=['POST'])

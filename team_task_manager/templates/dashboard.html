@@ -5,9 +5,15 @@
 <ul class="list-group">
     {% for task in my_tasks %}
         <li class="list-group-item">
-            <strong>{{ task.title }}</strong> - {{ task.status }}
-            <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-warning float-end mx-1">Edit</a>
-            <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-sm btn-danger float-end">Delete</a>
+            <strong>{{ task.title }}</strong> - {{ task.status }} - {{task.priority}}
+            <a href="{{ url_for('edit_task', task_id=task.id) }}" class="botao tarefa">Edit</a>
+
+            <!-- botao excluir -->
+            <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post">
+                <button type="submit" class="delete">Excluir</button>
+            </form>
+
+            
         </li>
     {% endfor %}
 </ul>

@@ -13,7 +13,7 @@
     <div class="mb-3">
         <label>Share With</label>
         <select name="shared_with" class="form-control">
-            {% for user in users %}
+            {% for user in user %}
             <option value="{{ user.id }}">{{ user.username }}</option>
             {% endfor %}
         </select>
