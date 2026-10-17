@@ -6,11 +6,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
 from models import User, Task, STATUS_ORDER, STATUS_EDITAVEIS, STATUS_CSS, PRIORIDADES, PENDENTE
 
-app = Flask(__name__)
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Banco sempre em team_task_manager/instance/database.db
+app = Flask(__name__, instance_path=os.path.join(BASE_DIR, 'instance'))
+#app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'senha1234')  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+
 
 # Direciona pro login se não estiver logado
 login_manager = LoginManager()
@@ -242,4 +248,4 @@ def delete_task(task_id):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5005)

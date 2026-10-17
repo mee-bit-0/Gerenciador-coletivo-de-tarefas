@@ -1,39 +1,72 @@
 {% extends "base.html" %}
+{% block title %}Painel de tarefas{% endblock %}
 {% block content %}
 
-<h2>Your Tasks</h2>
-<ul class="list-group">
-    {% for task in my_tasks %}
-    
-    
-        <div class="card-tarefa">
-        <li class="list-group-item">
-            <strong>{{ task.title }}</strong> - {{ task.status }} - {{task.priority}}
-            <!--<a href="{{ url_for('edit_task', task_id=task.id) }}" class="botao tarefa">Edit</a>-->
+{# Cartão de uma tarefa. `status` é o status efetivo (inclui Atrasada). #}
+{% macro task_card(task, status) %}
+<div class="task-card border-{{ STATUS_CSS[status]|replace('dot-', '') }}">
+    <div class="task-title">{{ task.title }}</div>
+    {% if task.description %}
+    <div class="task-desc">{{ task.description|truncate(90) }}</div>
+    {% endif %}
+    <div class="task-meta">
+        <span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}
+        &middot; Prazo: <strong>{{ task.deadline.strftime('%d/%m/%Y') }}</strong>
+        &middot;
+        <span class="badge {% if task.priority == 'Alta' %}bg-danger{% elif task.priority == 'Média' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ task.priority }}</span>
+    </div>
+    {% if can_edit(task) or can_delete(task) %}
+    <div class="mt-2">
+        {% if can_edit(task) %}
+        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+        {% endif %}
+        {% if can_delete(task) %}
+        <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-danger">Excluir</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
 
-            <!-- botao editar -->
-            <form action="{{ url_for('edit_task', task_id=task.id) }}" method="get">
-                <button type="submit" class="edit">Editar</button>
-            </form>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Tarefas da equipe</h2>
+    <a href="{{ url_for('add_task') }}" class="btn btn-primary">Nova tarefa</a>
+</div>
 
+<div class="legend mb-4 small">
+    {% for status in STATUS_ORDER %}
+    <span><span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}</span>
+    {% endfor %}
+</div>
 
-            <!-- botao excluir -->
-            <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post">
-                <button type="submit" class="delete">Excluir</button>
-            </form>
-
-            
-        </li>
+{% for item in board %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>{{ item.user.username }}{% if item.user.id == current_user.id %} (você){% endif %}</strong>
+        <span class="badge bg-dark">{{ item.total }} tarefa{{ 's' if item.total != 1 }}</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            {% for status in STATUS_ORDER %}
+            <div class="col-12 col-md-6 col-xl-3">
+                <h6 class="d-flex align-items-center mb-3">
+                    <span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}
+                    <span class="text-muted ms-1">({{ item.columns[status]|length }})</span>
+                </h6>
+                {% for task in item.columns[status] %}
+                    {{ task_card(task, status) }}
+                {% else %}
+                    <p class="text-muted small">Nenhuma tarefa</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</ul>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    Ainda não há tarefas.
+</div>
+{% endfor %}
 
-<h4 class="mt-4">Tasks Shared With You</h4>
-<ul class="list-group">
-    {% for task in shared_tasks %}
-        <li class="list-group-item">
-            <strong>{{ task.title }}</strong> - {{ task.status }}
-        </li>
-    {% endfor %}
-</ul>
 {% endblock %}

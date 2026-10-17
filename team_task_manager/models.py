@@ -47,8 +47,9 @@ class Task(db.Model):
     assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     assignee = db.relationship('User', foreign_keys=[assigned_to], backref='assigned_tasks')
 
-@property
-def effective_status(self):
-    if self.status != CONCLUIDA and self.deadline < date.today():
-       return ATRASADA
-    return self.status
+    @property
+    def effective_status(self):
+        status = self.status if self.status in STATUS_ORDER else PENDENTE
+        if status != CONCLUIDA and self.deadline and self.deadline < date.today():
+            return ATRASADA
+        return status
