@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Nova tarefa{% endblock %}
 {% block content %}
+
 <h2 class="mb-3">Nova tarefa</h2>
 <form method="POST">
     {% include "campos_task.html" %}
     <button class="btn btn-primary">Adicionar tarefa</button>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-link">Cancelar</a>
+    <a href="{{ url_for('dashboard') }}" class="cancel btn">Cancelar</a>
 </form>
 {% endblock %}

@@ -129,7 +129,7 @@ def dashboard():
 
 def parse_date(texto):
     try:
-        return datetime.strptime(texto, '%d-%m-%Y').date()
+        return datetime.strptime(texto, '%Y-%m-%d').date()
     except (ValueError, TypeError):
         return None
 
