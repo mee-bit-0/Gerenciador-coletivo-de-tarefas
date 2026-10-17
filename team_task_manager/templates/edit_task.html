@@ -8,10 +8,10 @@
 
 <form method="POST">
 
-    {% include "_task_fields.html" %}
+    {% include "campos_task.html" %}
     <button class="btn btn-primary">Salvar alterações</button>
     <a href="{{ url_for('dashboard') }}" class="btn btn-link">Cancelar</a>
-    
+
 </form>
 
 {% endblock %}
