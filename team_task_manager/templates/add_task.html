@@ -1,18 +1,26 @@
-{% extends "base.html" %}
-{% block title %}Nova tarefa{% endblock %}
-{% block content %}
+<!--=================== MODAL ADICIONAR TAREFA=====================-->
 
-<section class="card">
-    <h2 class="page-title">Nova tarefa</h2>
+<form action="{{ url_for('add_task') }}" method="POST" data-modal-form data-modal-size="wide">
 
-    <form method="POST">
+    <div class="modal-header">
+        <h3 class="modal-title">Nova tarefa</h3>
+        <button type="button" class="button button-secondary button-small" data-close-modal aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="modal-body">
+        {% if error %}
+        <p class="form-error">{{ error }}</p>
+        {% endif %}
+
         {% include "campos_task.html" %}
+    </div>
 
-        <div class="form-actions">
+    <div class="modal-actions">
+        <div class="modal-actions-group"></div>
+        <div class="modal-actions-group">
+            <button type="button" class="button button-secondary" data-close-modal>Cancelar</button>
             <button type="submit" class="button button-primary">Adicionar tarefa</button>
-            <a href="{{ url_for('dashboard') }}" class="button button-secondary">Cancelar</a>
         </div>
-    </form>
-</section>
+    </div>
 
-{% endblock %}
+</form>

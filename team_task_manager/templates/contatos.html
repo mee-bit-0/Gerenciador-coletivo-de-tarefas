@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block title %}Contatos{% endblock %}
-
 {% block content %}
 
 <h2 class="page-title">Contatos</h2>
@@ -16,7 +15,7 @@
 
             <!-------botao de excluir contato(pra admins)---------->
             {% if current_user.role == 'admin' and u.id != current_user.id %}
-            <a href="{{ url_for('delete_user', user_id=u.id) }}" class="button button-danger button-small">Excluir</a>
+            <a href="{{ url_for('delete_user', user_id=u.id) }}" class="button button-danger button-small" data-modal>Excluir</a>
             {% endif %}
         </div>
 

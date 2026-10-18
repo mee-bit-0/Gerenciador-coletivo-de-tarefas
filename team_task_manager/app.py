@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, request, flash
+from functools import wraps
+from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
@@ -202,17 +203,35 @@ def all_users():
     return User.query.order_by(User.username).all()
 
 #-----------------------adicionar tarefa----------------------
+#-----------------------janelas (modais)----------------------
+def modal_only(view):
+    """As telas de tarefa e de exclusão são janelas (modais) e só respondem a pedidos feitos
+    pelo JavaScript da página. Se alguém abrir o endereço direto no navegador, volta para o painel."""
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if request.headers.get('X-Modal-Request') != '1':
+            return redirect(url_for('dashboard'))
+        return view(*args, **kwargs)
+    return wrapper
+
+
+def modal_redirect(endpoint):
+    """Resposta para a janela: o JavaScript navega para a página indicada,
+    onde as mensagens (flash) aparecem."""
+    return jsonify(redirect=url_for(endpoint))
+
+#-----------------------adicionar tarefa----------------------
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
+@modal_only
 def add_task():
     values = {'title': '', 'description': '', 'deadline': '', 'priority': 'Média',
               'status': PENDENTE, 'assigned_to': str(current_user.id)}
+    error = None
 
     if request.method == 'POST':
         values, deadline, error = read_task_form(request.form)
-        if error:
-            flash(error, 'danger')
-        else:
+        if not error:
             new_task = Task(
                 title=values['title'],
                 description=values['description'],
@@ -225,15 +244,17 @@ def add_task():
             db.session.add(new_task)
             db.session.commit()
             flash('Tarefa adicionada!', 'success')
-            return redirect(url_for('dashboard'))
+            return modal_redirect('dashboard')
 
-    return render_template('add_task.html', values=values, users=all_users())
+    # GET, ou POST com erro: mostra o formulário dentro da janela (com a mensagem de erro, se houver)
+    return render_template('add_task.html', values=values, users=all_users(), error=error)
 
 #-----------------------visualizar tarefa----------------------
 @app.route('/task/<int:task_id>')
 @login_required
+@modal_only
 def view_task(task_id):
-    """Devolve só o conteúdo do modal (task.html), carregado via fetch no painel."""
+    """Devolve só o conteúdo da janela (task.html), carregado via fetch."""
     task = db.get_or_404(Task, task_id)
     creator = db.session.get(User, task.created_by)
     return render_template('task.html', task=task, creator=creator)
@@ -241,22 +262,22 @@ def view_task(task_id):
 #-----------------------editar tarefa----------------------
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 @login_required
+@modal_only
 def edit_task(task_id):
     task = db.get_or_404(Task, task_id)
 
     if not can_edit(task):
         flash('Acesso negado', 'danger')
-        return redirect(url_for('dashboard'))
+        return modal_redirect('dashboard')
 
     values = {'title': task.title, 'description': task.description,
               'deadline': task.deadline.isoformat(), 'priority': task.priority,
               'status': task.status, 'assigned_to': str(task.assigned_to)}
+    error = None
 
     if request.method == 'POST':
         values, deadline, error = read_task_form(request.form)
-        if error:
-            flash(error, 'danger')
-        else:
+        if not error:
             task.title = values['title']
             task.description = values['description']
             task.deadline = deadline
@@ -265,44 +286,46 @@ def edit_task(task_id):
             task.assigned_to = int(values['assigned_to'])
             db.session.commit()
             flash('Tarefa atualizada!', 'success')
-            return redirect(url_for('dashboard'))
+            return modal_redirect('dashboard')
 
-    return render_template('edit_task.html', task=task, values=values, users=all_users())
+    return render_template('edit_task.html', task=task, values=values, users=all_users(), error=error)
 
 #-----------------------deletar tarefa----------------------
 @app.route('/delete/<int:task_id>', methods=['GET', 'POST'])
 @login_required
+@modal_only
 def delete_task(task_id):
     task = db.get_or_404(Task, task_id)
 
     if not can_delete(task):
         flash('Acesso negado', 'danger')
-        return redirect(url_for('dashboard'))
+        return modal_redirect('dashboard')
 
     if request.method == 'POST':
         db.session.delete(task)
         db.session.commit()
         flash('Tarefa deletada!', 'success')
-        return redirect(url_for('dashboard'))
+        return modal_redirect('dashboard')
 
-    # GET: mostra a tela de confirmação (delete.html)
+    # GET: mostra a confirmação dentro da janela (delete.html)
     return render_template('delete.html', task=task)
 
 #-----------------------deletar usuario----------------------
 
 @app.route('/user/<int:user_id>/delete', methods=['GET', 'POST'])
 @login_required
+@modal_only
 def delete_user(user_id):
     target = db.get_or_404(User, user_id)
 
     if not can_delete_user(target):
         flash('Acesso negado', 'danger')
-        return redirect(url_for('dashboard'))
+        return modal_redirect('dashboard')
 
     # nunca deixar o sistema sem nenhum administrador
     if target.role == 'admin' and User.query.filter_by(role='admin').count() <= 1:
         flash('Não é possível excluir o único administrador.', 'danger')
-        return redirect(url_for('dashboard'))
+        return modal_redirect('dashboard')
 
     is_self = target.id == current_user.id
 
@@ -313,9 +336,9 @@ def delete_user(user_id):
         remove_user(target)
         if is_self:
             flash('Sua conta foi excluída.', 'success')
-            return redirect(url_for('login'))
+            return modal_redirect('login')
         flash(f'Usuário {username} excluído.', 'success')
-        return redirect(url_for('contatos'))
+        return modal_redirect('contatos')
 
     n_tasks = tasks_of(target).count()
     return render_template('delete_user.html', target=target, is_self=is_self, n_tasks=n_tasks)
