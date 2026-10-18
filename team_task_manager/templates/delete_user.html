@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Excluir {{ 'conta' if is_self else 'usuário' }}{% endblock %}
+{% block content %}
+
+<section class="card form-page">
+    <h2 class="page-title">{{ 'Excluir minha conta' if is_self else 'Excluir usuário' }}</h2>
+
+    {% if is_self %}
+    <p>Tem certeza que deseja excluir a sua conta, <strong>{{ target.username }}</strong>?</p>
+    {% else %}
+    <p>Tem certeza que deseja excluir o usuário <strong>{{ target.username }}</strong>?</p>
+    {% endif %}
+
+    <div class="warning-message">
+        {% if n_tasks %}
+        {{ n_tasks }} tarefa{{ 's' if n_tasks != 1 }} criada{{ 's' if n_tasks != 1 }} por
+        {{ 'você' if is_self else 'essa pessoa' }} ou atribuída{{ 's' if n_tasks != 1 }}
+        a {{ 'você' if is_self else 'ela' }} {{ 'serão apagadas' if n_tasks != 1 else 'será apagada' }} junto com a conta.
+        {% else %}
+        Não há tarefas criadas por {{ 'você' if is_self else 'essa pessoa' }} nem atribuídas a {{ 'você' if is_self else 'ela' }}.
+        {% endif %}
+        Essa ação não pode ser desfeita.
+    </div>
+
+    <form action="{{ url_for('delete_user', user_id=target.id) }}" method="POST">
+        <div class="form-actions">
+            <button type="submit" class="button button-danger">Excluir</button>
+            <a href="{{ url_for('contatos' if not is_self else 'dashboard') }}" class="button button-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

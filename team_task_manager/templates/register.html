@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<section class="card form-page">
+    <h2 class="page-title">Registro</h2>
+
+    <!--============================== FORMULARIO DE REGISTRO ============================-->
+    <form method="POST">
+        <!-------------------------------- Usuario ----------------------------->
+        <div class="form-field">
+            <label for="username" class="form-label">Usuário</label>
+            <input type="text" id="username" name="username" class="form-input" required>
+        </div>
+
+        <!--------------------------- Senha ---------------------------->
+        <div class="form-field">
+            <label for="password" class="form-label">Senha</label>
+            <input type="password" id="password" name="password" class="form-input" required>
+        </div>
+
+        <!----------------------------Telefone------------------------->
+        <div class="form-field">
+            <label for="telefone" class="form-label">Telefone</label>
+            <input type="tel" id="telefone" name="phone" class="form-input"
+                   placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15"
+                   pattern="\(\d{2}\) \d{4,5}-\d{4}" title="Use o formato (00) 00000-0000"
+                   required>
+        </div>
+
+        <!--Formatação automatica do telefone na visualização-->
+        <script>
+        document.getElementById('telefone').addEventListener('input', function () {
+            let d = this.value.replace(/\D/g, '').slice(0, 11);
+            if (d.length > 10)      this.value = `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+            else if (d.length > 6)  this.value = `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+            else if (d.length > 2)  this.value = `(${d.slice(0,2)}) ${d.slice(2)}`;
+            else if (d.length > 0)  this.value = `(${d}`;
+            else                    this.value = '';
+        });
+        </script>
+
+        <!---------------------------Tipo de conta-------------------------->
+        <div class="form-field">
+            <label for="role" class="form-label">Tipo de conta</label>
+            <select id="role" name="role" class="form-select">
+                <option value="member">Membro</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+
+        <!--botão registrar-->
+        <button type="submit" class="button button-primary">Registrar</button>
+    
+    </form>
+
+    <div class="link-question">
+        <span>Já possui uma conta?</span>
+        <!--botão de encaminhamento pro login-->
+        <a href="{{ url_for('login') }}" class="button button-secondary button-small">Entrar</a>
+    </div>
+    
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<section class="card form-page">
+    <h2 class="page-title">Login</h2>
+
+    <!--============================== FORMULARIO DE LOGIN ============================-->
+    <form method="POST">
+        <!----------------------Usuário------------------------>
+        <div class="form-field">
+            <label for="username" class="form-label">Usuário</label>
+            <input type="text" id="username" name="username" class="form-input" required>
+        </div>
+
+        <!----------------------Senha------------------------>
+        <div class="form-field">
+            <label for="password" class="form-label">Senha</label>
+            <input type="password" id="password" name="password" class="form-input" required>
+        </div>
+
+        <!--botão entrar-->
+        <button type="submit" class="button button-primary">Entrar</button>
+
+    </form>
+
+    <div class="link-question">
+        <span>Não possui conta?</span>
+        <!--botão de encaminhamento pro registro-->
+        <a href="{{ url_for('register') }}" class="button button-secondary button-small">Registre-se</a>
+    </div>
+    
+</section>
+{% endblock %}

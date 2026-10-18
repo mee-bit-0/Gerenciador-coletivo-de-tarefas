@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Painel de tarefas{% endblock %}
+{% block container_class %}container container-wide{% endblock %}
+{% block content %}
+{% macro task_card(task, status) %}
+
+<div class="task-card {{ STATUS_CSS[status] }}">
+
+    <div class="task-card-header">
+        <div class="task-title">{{ task.title }}</div>
+        <button type="button" class="button-details"
+                data-details-url="{{ url_for('view_task', task_id=task.id) }}"
+                title="Ver detalhes" aria-label="Ver detalhes">&hellip;</button>
+    </div>
+
+    {% if task.description %}
+    <div class="task-description">{{ task.description|truncate(90) }}</div>
+    {% endif %}
+
+    <div class="task-info">
+        <span class="status-label">
+            <span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}
+        </span>
+    </div>
+    <div class="task-info">
+        <span>Prazo: <strong>{{ task.deadline.strftime('%d/%m/%Y') }}</strong></span>
+        <span class="priority-tag {{ PRIORITY_CSS[task.priority] }}">{{ task.priority }}</span>
+    </div>
+
+</div>
+
+{% endmacro %}
+
+<!-----------Cabeçalho do painel de tarefas----------->
+<div class="dashboard-header">
+    <h2 class="page-title">Tarefas da equipe</h2>
+    
+    <a href="{{ url_for('add_task') }}" class="button button-primary">Nova tarefa</a>
+    
+</div>
+
+<div class="status-legend">
+    {% for status in STATUS_ORDER %}
+    <span class="status-label"><span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}</span>
+    {% endfor %}
+</div>
+
+<!-------- Conteúdo do painel -------->
+{% for item in board %}
+<section class="card user-board">
+    <!---------Cabeçalho do quadro do usuário---------->
+    <div class="user-board-header">
+        <span class="user-name">{{ item.user.username }}{% if item.user.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</span>
+        <span class="task-count">{{ item.total }} tarefa{{ 's' if item.total != 1 }}</span>
+    </div>
+    <!---------Colunas de status das tarefas---------->
+    <div class="status-columns">
+        {% for status in STATUS_ORDER %}
+        <div class="status-column">
+            <h3 class="status-column-title">
+                <span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}
+                <span class="status-column-count">({{ item.columns[status]|length }})</span>
+            </h3>
+
+            {% for task in item.columns[status] %}
+                {{ task_card(task, status) }}
+            {% else %}
+                <p class="muted-text">Nenhuma tarefa</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<section class="card">
+    <p class="empty-message">Nada a fazer por aqui.</p>
+</section>
+{% endfor %}
+
+<!---------------------------- Janela (modal) de detalhes da tarefa ------------------------------>
+
+<dialog id="task-modal" class="custom-modal">
+    <div id="task-modal-content"></div>
+</dialog>
+
+<!----------Script da janela de detalhes da tarefa---------->
+
+<script>
+    const taskModal = document.getElementById("task-modal");
+    const taskModalContent = document.getElementById("task-modal-content");
+
+    async function openTaskModal(detailsUrl) {
+        taskModalContent.innerHTML = '<p class="modal-loading">Carregando...</p>';
+        taskModal.showModal();
+        try {
+            const response = await fetch(detailsUrl);
+            if (response.redirected) {          // sessão expirou: vai para o login
+                window.location.href = response.url;
+                return;
+            }
+            if (!response.ok) throw new Error("Falha ao carregar a tarefa");
+            taskModalContent.innerHTML = await response.text();
+        } catch (error) {
+            taskModalContent.innerHTML = '<p class="modal-loading">Não foi possível carregar a tarefa.</p>';
+        }
+    }
+
+    document.querySelectorAll("[data-details-url]").forEach((detailsButton) => {
+        detailsButton.addEventListener("click", () => openTaskModal(detailsButton.dataset.detailsUrl));
+    });
+
+    taskModal.addEventListener("click", (event) => {
+        // botões "Fechar" (carregados junto com o conteúdo) ou clique no fundo escuro
+        if (event.target.closest("[data-close-modal]") || event.target === taskModal) {
+            taskModal.close();
+        }
+    });
+</script>
+
+{% endblock %}

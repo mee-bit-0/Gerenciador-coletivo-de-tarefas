@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Editar tarefa{% endblock %}
+{% block content %}
+
+<section class="card">
+    <h2 class="page-title">Editar tarefa</h2>
+
+    <form method="POST">
+        {% include "campos_task.html" %}
+
+        <div class="form-actions">
+            <button type="submit" class="button button-primary">Salvar alterações</button>
+            <a href="{{ url_for('dashboard') }}" class="button button-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="kemuri-koke-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Gerenciador Coletivo de Tarefas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="{% block container_class %}container{% endblock %}">
+
+    <!-------------------cabeçalho e menu------------------>
+    <header class="header">
+        <h1 class="logo">
+            <a href="{{ url_for('home') }}" class="logo-link">➤ Gerenciador Coletivo de Tarefas ✓</a>
+        </h1>
+
+        <nav class="main-menu">
+            {% if current_user.is_authenticated %}
+
+                <!----------páginas---------->
+                <a href="{{ url_for('dashboard') }}" class="button button-secondary">Tarefas</a>
+                <a href="{{ url_for('contatos') }}" class="button button-secondary">Contatos</a>
+
+                <!-------- opções do usuário -------->
+                <details class="dropdown">
+                    <summary class="button button-secondary">Olá, {{ current_user.username }} ▾</summary>
+                    <div class="dropdown-menu">
+                        <a href="{{ url_for('logout') }}" class="dropdown-item">Sair</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('delete_user', user_id=current_user.id) }}" class="dropdown-item dropdown-item-danger">Excluir conta</a>
+                    </div>
+                </details>
+
+            {% else %}
+
+                <a href="{{ url_for('login') }}" class="button button-secondary">Entrar</a>
+                <a href="{{ url_for('register') }}" class="button button-secondary">Registrar</a>
+
+            {% endif %}
+        </nav>
+    </header>
+
+
+<hr class="divisoria-horizontal">
+
+    <!-------------------mensagens------------------>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash">
+            {% for category, message in messages %}
+            <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-------------------conteúdo da página------------------>
+    {% block content %}{% endblock %}
+
+</main>
+
+<footer class="footer">
+    <small>Feito por <b>Aimée Cavalcante</b>, Antônio Neto e Gustavo Lisboa</small>
+</footer>
+
+<script>
+    // Fecha qualquer menu suspenso aberto quando clicar fora dele
+    document.addEventListener("click", (event) => {
+        document.querySelectorAll("details.dropdown").forEach((dropdown) => {
+            if (!dropdown.contains(event.target)) {
+                dropdown.removeAttribute("open");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

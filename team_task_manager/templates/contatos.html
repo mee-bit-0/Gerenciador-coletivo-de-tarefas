@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Contatos{% endblock %}
+
+{% block content %}
+
+<h2 class="page-title">Contatos</h2>
+
+<div class="contacts-grid">
+
+    {% for u in users %}
+    <section class="card contact-card">
+
+        <div class="contact-card-header">
+            <!-------usuário---------->
+            <h3 class="contact-name">{{ u.username }}{% if u.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</h3>
+
+            <!-------botao de excluir contato(pra admins)---------->
+            {% if current_user.role == 'admin' and u.id != current_user.id %}
+            <a href="{{ url_for('delete_user', user_id=u.id) }}" class="button button-danger button-small">Excluir</a>
+            {% endif %}
+        </div>
+
+        <!-------telefone---------->
+        <p class="contact-phone">
+            Telefone:
+            {% if u.telefone %}
+                {{ u.telefone|telefone }}
+            {% else %}
+                <span class="muted-text">não informado</span>
+            {% endif %}
+        </p>
+
+    </section>
+    {% endfor %}
+
+</div>
+
+{% endblock %}
