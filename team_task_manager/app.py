@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
-from models import User, Task, STATUS_ORDER, STATUS_EDITAVEIS, STATUS_CSS, PRIORIDADES, PENDENTE
+from models import User, Task, STATUS_ORDER, STATUS_EDITAVEIS, STATUS_CSS, PRIORITY_CSS, PRIORIDADES, PENDENTE
 import re
 from sqlalchemy import or_
 
@@ -54,6 +54,7 @@ def inject_globals():
         STATUS_ORDER=STATUS_ORDER,
         STATUS_EDITAVEIS=STATUS_EDITAVEIS,
         STATUS_CSS=STATUS_CSS,
+        PRIORITY_CSS=PRIORITY_CSS,
         PRIORIDADES=PRIORIDADES,
         can_edit=can_edit,
         can_delete=can_delete,

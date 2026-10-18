@@ -2,8 +2,6 @@ from extensions import db
 from flask_login import UserMixin
 from datetime import date, timezone
 
-
-
 PENDENTE = 'Pendente'
 EM_ANDAMENTO = 'Em andamento'
 CONCLUIDA = 'Concluída'
@@ -15,14 +13,20 @@ STATUS_ORDER = [PENDENTE, EM_ANDAMENTO, CONCLUIDA, ATRASADA]
 #status selecionaveis
 STATUS_EDITAVEIS = [PENDENTE, EM_ANDAMENTO, CONCLUIDA]
 
-# classes bolinhas
+# classe CSS dos status (usada na bolinha colorida e na borda do cartão da tarefa)
 STATUS_CSS = {
-    PENDENTE: 'dot-pendente',
-    EM_ANDAMENTO: 'dot-andamento',
-    CONCLUIDA: 'dot-concluida',
-    ATRASADA: 'dot-atrasada',
+    PENDENTE: 'status-pendente',
+    EM_ANDAMENTO: 'status-em-andamento',
+    CONCLUIDA: 'status-concluida',
+    ATRASADA: 'status-atrasada',
 }
 
+# classe CSS das prioridades
+PRIORITY_CSS = {
+    'Baixa': 'priority-baixa',
+    'Média': 'priority-media',
+    'Alta': 'priority-alta',
+}
 
 PRIORIDADES = ['Baixa', 'Média', 'Alta']
 
