@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Painel de tarefas{% endblock %}
+{% block container_class %}container-xxl{% endblock %}
 {% block content %}
 
 
@@ -44,9 +45,9 @@
         <span class="badge bg-dark">{{ item.total }} tarefa{{ 's' if item.total != 1 }}</span>
     </div>
     <div class="card-body">
-        <div class="row g-3">
+        <div class="row g-5">
             {% for status in STATUS_ORDER %}
-            <div class="col-12 col-md-6 col-xl-3">
+            <div class="col-12 col-md-6 col-xl-3 status-col">
                 <h6 class="d-flex align-items-center mb-3">
                     <span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}
                     <span class="text-muted ms-1">({{ item.columns[status]|length }})</span>

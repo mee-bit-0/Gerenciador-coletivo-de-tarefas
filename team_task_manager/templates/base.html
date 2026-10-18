@@ -15,7 +15,9 @@
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
             {% if current_user.is_authenticated %}
-
+                <!----------páginas---------->
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Tarefas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('contatos') }}">Contatos</a></li>
                 <!-------- opções do usuário -------->
                 <li class="nav-item dropdown">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle ms-lg-2" type="button"
@@ -28,12 +30,9 @@
                         <li><a class="dropdown-item text-danger" href="{{ url_for('delete_user', user_id=current_user.id) }}">Excluir conta</a></li>
                     </ul>
                 </li>
-                <!----------páginas---------->
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Tarefas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('contatos') }}">Contatos</a></li>
                 
             {% else %}
-                
+
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Entrar</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Registrar</a></li>
 
@@ -42,7 +41,9 @@
     </div>
 </nav>
 
-<div class="container mt-4 mb-5">
+<!-------------------container/conteudo------------------>
+
+<div class="{% block container_class %}container{% endblock %} mt-4 mb-5">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
             <div class="alert alert-{{ category }} alert-dismissible fade show">

@@ -56,15 +56,30 @@ body {
   text-align: center;
 }
 
-
-.container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 1rem;
-  color:--mSurface
-}
 .btn-task-details { line-height: 1; padding: 0.1rem 0.45rem; font-weight: 700; }
 .task-full-desc { white-space: pre-wrap; word-break: break-word; }
 .navbar {background-color: var(--mPrimary); color: var(--mOnPrimary); padding: 0.5rem 1rem; display: flex; justify-content: space-between; align-items: center;}
 
 .mb-3 { background-color: var(--mSurface); color: var(--mOnSurface); padding: 0.5rem; border-radius: 0.25rem; margin-bottom: 1rem; }
+
+/* ---------- Linha entre as colunas de status ---------- */
+
+/* Celular (1 coluna por linha): linha horizontal entre uma coluna e a seguinte */
+@media (max-width: 767.98px) {
+    .status-col + .status-col {
+        border-top: 1px solid #dee2e6;
+        padding-top: 1rem;
+    }
+}
+
+/* Tela média (2 colunas por linha): linha vertical entre as duas da mesma linha
+   e horizontal entre a primeira e a segunda linha */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .status-col:nth-child(even)  { border-left: 1px solid #000000; }
+    .status-col:nth-child(n+3)   { border-top: 1px solid #000000; padding-top: 1rem; }
+}
+
+/* Tela larga (4 colunas na mesma linha): linha vertical entre todas */
+@media (min-width: 1200px) {
+    .status-col + .status-col { border-left: 1px solid #080808; }
+}
