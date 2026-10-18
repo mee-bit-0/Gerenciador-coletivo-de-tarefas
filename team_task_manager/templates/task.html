@@ -1,6 +1,7 @@
 {% set status = task.effective_status %}
-<!--================================ MODAL DA TAREFA ================================-->
 
+<!--================================ MODAL DA TAREFA ================================-->
+<div data-modal-size="wide">
 <!-------------titulo--------------->
 <div class="modal-header">
     <h3 class="modal-title">{{ task.title }}</h3>
@@ -42,14 +43,16 @@
 <div class="modal-actions">
     <div class="modal-actions-group">
         {% if can_delete(task) %}
-        <a href="{{ url_for('delete_task', task_id=task.id) }}" class="button button-danger">Excluir</a>
+        <a href="{{ url_for('delete_task', task_id=task.id) }}" class="button button-danger" data-modal>Excluir</a>
         {% endif %}
     </div>
 
     <div class="modal-actions-group">
         {% if can_edit(task) %}
-        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="button button-primary">Editar</a>
+        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="button button-primary" data-modal>Editar</a>
         {% endif %}
         <button type="button" class="button button-secondary" data-close-modal>Fechar</button>
     </div>
+</div>
+
 </div>

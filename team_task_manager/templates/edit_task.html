@@ -1,18 +1,26 @@
-{% extends "base.html" %}
-{% block title %}Editar tarefa{% endblock %}
-{% block content %}
+<!--=================== MODAL EDITAR TAREFA=====================-->
 
-<section class="card">
-    <h2 class="page-title">Editar tarefa</h2>
+<form action="{{ url_for('edit_task', task_id=task.id) }}" method="POST" data-modal-form data-modal-size="wide">
 
-    <form method="POST">
+    <div class="modal-header">
+        <h3 class="modal-title">Editar tarefa</h3>
+        <button type="button" class="button button-secondary button-small" data-close-modal aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="modal-body">
+        {% if error %}
+        <p class="form-error">{{ error }}</p>
+        {% endif %}
+
         {% include "campos_task.html" %}
+    </div>
 
-        <div class="form-actions">
+    <div class="modal-actions">
+        <div class="modal-actions-group"></div>
+        <div class="modal-actions-group">
+            <button type="button" class="button button-secondary" data-close-modal>Cancelar</button>
             <button type="submit" class="button button-primary">Salvar alterações</button>
-            <a href="{{ url_for('dashboard') }}" class="button button-secondary">Cancelar</a>
         </div>
-    </form>
-</section>
+    </div>
 
-{% endblock %}
+</form>
