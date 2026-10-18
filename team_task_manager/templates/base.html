@@ -10,18 +10,33 @@
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-    <a class="navbar-brand" href="{{ url_for('home') }}">Gerenciador Coletivo de Tarefas</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{ url_for('home') }}">Gerenciador de Tarefas</a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
             {% if current_user.is_authenticated %}
-                <li class="nav-item"><span class="navbar-text me-3">Olá, {{ current_user.username }}</span></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Painel</a></li>
+
+                <!-------- opções do usuário -------->
+                <li class="nav-item dropdown">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle ms-lg-2" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Olá, {{ current_user.username }}
+                    </button>
+                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('delete_user', user_id=current_user.id) }}">Excluir conta</a></li>
+                    </ul>
+                </li>
+                <!----------páginas---------->
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Tarefas</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('contatos') }}">Contatos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Sair</a></li>
+                
             {% else %}
+                
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Entrar</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Registrar</a></li>
+
             {% endif %}
         </ul>
     </div>

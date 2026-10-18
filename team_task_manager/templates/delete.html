@@ -11,7 +11,7 @@
 
 <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST">
     <button type="submit" class="btn btn-danger">Sim, deletar</button>
-    <a href="{{ url_for('dashboard') }}" class="cancel btn">Cancelar</a>
+    <a class="btn btn-link" href="{{ url_for('dashboard') }}" class="cancel btn">Cancelar</a>
 </form>
 
 {% endblock %}

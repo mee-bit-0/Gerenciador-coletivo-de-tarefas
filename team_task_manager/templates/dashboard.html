@@ -5,7 +5,14 @@
 
 {% macro task_card(task, status) %}
 <div class="task-card border-{{ STATUS_CSS[status]|replace('dot-', '') }}">
+   
+    <div class="d-flex justify-content-between align-items-start gap-2">
     <div class="task-title">{{ task.title }}</div>
+        <button type="button" class="btn btn-sm btn-light border btn-task-details"
+            data-url="{{ url_for('view_task', task_id=task.id) }}"
+            title="Ver detalhes" aria-label="Ver detalhes">&hellip;</button>
+    </div>
+
     {% if task.description %}
     <div class="task-desc">{{ task.description|truncate(90) }}</div>
     {% endif %}
@@ -15,16 +22,7 @@
         &middot;
         <span class="badge {% if task.priority == 'Alta' %}bg-danger{% elif task.priority == 'Média' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ task.priority }}</span>
     </div>
-    {% if can_edit(task) or can_delete(task) %}
-    <div class="mt-2">
-        {% if can_edit(task) %}
-        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
-        {% endif %}
-        {% if can_delete(task) %}
-        <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-danger">Excluir</a>
-        {% endif %}
-    </div>
-    {% endif %}
+    
 </div>
 {% endmacro %}
 
@@ -68,5 +66,37 @@
     Ainda não há tarefas.
 </div>
 {% endfor %}
+
+<!---------------------------- Modal para detalhes da tarefa ------------------------------>
+
+<div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" id="taskModalContent"></div>
+    </div>
+</div>
+
+<!----------Script para modal de detalhes da tarefa---------->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = new bootstrap.Modal(document.getElementById('taskModal'));
+    const content = document.getElementById('taskModalContent');
+
+    document.querySelectorAll('.btn-task-details').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+            content.innerHTML = '<div class="modal-body text-center py-5"><div class="spinner-border"></div></div>';
+            modal.show();
+            try {
+                const resp = await fetch(btn.dataset.url);
+                if (resp.redirected) { window.location.href = resp.url; return; }  // sessão expirou
+                if (!resp.ok) throw new Error();
+                content.innerHTML = await resp.text();
+            } catch (e) {
+                content.innerHTML = '<div class="modal-body">Não foi possível carregar a tarefa.</div>';
+            }
+        });
+    });
+});
+</script>
 
 {% endblock %}

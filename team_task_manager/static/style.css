@@ -1,3 +1,9 @@
+@import url("palette.css");
+
+body { 
+  background: var(--mSurface); 
+  color: var(--mOnSurface); 
+  margin: 0; }
 /* ---------- Bolinhas de status ---------- */
 .dot {
   display: inline-block;
@@ -36,3 +42,29 @@
 
 /* ---------- Formulários de login/registro ---------- */
 .form-narrow { max-width: 420px; margin: 0 auto; }
+
+/*---------------Barra de navegação----------------*/
+.nav-item .nav-link { 
+  color: #fff; 
+  padding: 0.5rem 1rem;
+  size: 1rem;
+}
+.navbar-text { 
+  color: #fff; 
+  padding: 0.5rem 1rem;
+  font-size: 24px;
+  text-align: center;
+}
+
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+  color:--mSurface
+}
+.btn-task-details { line-height: 1; padding: 0.1rem 0.45rem; font-weight: 700; }
+.task-full-desc { white-space: pre-wrap; word-break: break-word; }
+.navbar {background-color: var(--mPrimary); color: var(--mOnPrimary); padding: 0.5rem 1rem; display: flex; justify-content: space-between; align-items: center;}
+
+.mb-3 { background-color: var(--mSurface); color: var(--mOnSurface); padding: 0.5rem; border-radius: 0.25rem; margin-bottom: 1rem; }

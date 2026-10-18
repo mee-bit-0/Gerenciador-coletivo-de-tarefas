@@ -1,0 +1,48 @@
+
+{% block title %}Tarefas{% endblock %}
+{% block content %}
+
+{% set status = task.effective_status %}
+
+<div class="modal-header">
+    <h5 class="modal-title">{{ task.title }}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+</div>
+
+<div class="modal-body">
+    <dl class="row mb-3">
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8"><span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}</dd>
+
+        <dt class="col-sm-4">Prazo</dt>
+        <dd class="col-sm-8">{{ task.deadline.strftime('%d/%m/%Y') }}</dd>
+
+        <dt class="col-sm-4">Prioridade</dt>
+        <dd class="col-sm-8">
+            <span class="badge {% if task.priority == 'Alta' %}bg-danger{% elif task.priority == 'Média' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ task.priority }}</span>
+        </dd>
+
+        <dt class="col-sm-4">Responsável</dt>
+        <dd class="col-sm-8">{{ task.assignee.username }}</dd>
+
+        <dt class="col-sm-4">Criada por</dt>
+        <dd class="col-sm-8">{{ creator.username if creator else '—' }}</dd>
+    </dl>
+
+    <h6>Descrição</h6>
+    <p class="task-full-desc mb-0">{{ task.description }}</p>
+</div>
+
+<div class="modal-footer">
+    {% if can_delete(task) %}
+    <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-outline-danger me-auto">Excluir</a>
+    {% endif %}
+    {% if can_edit(task) %}
+    <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-primary">Editar</a>
+    {% endif %}
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+</div>
+
+
+
+{%endblock %}

@@ -6,13 +6,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
 from models import User, Task, STATUS_ORDER, STATUS_EDITAVEIS, STATUS_CSS, PRIORIDADES, PENDENTE
 import re
+from sqlalchemy import or_
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-# Banco sempre em team_task_manager/instance/database.db
+# Cria banco em team_task_manager/instance/database.db
 app = Flask(__name__, instance_path=os.path.join(BASE_DIR, 'instance'))
-#app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'senha1234')  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -26,24 +26,27 @@ login_manager.login_view = 'login'
 login_manager.login_message = 'Faça login para acessar essa página.'
 login_manager.login_message_category = 'warning'
 
-# Carrega usuários
+# --------------Carrega usuários------------------
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
-#-----------------------------------------PERMISSOES---------------------------------------------
+#============================== PERMISSOES ===============================
     
 def can_edit(task):
-    """Pode editar: quem criou, o responsável ou um admin."""
+    #Pode editar: quem criou, o responsável ou um admin.
     return (current_user.role == 'admin'
             or task.created_by == current_user.id
             or task.assigned_to == current_user.id)
 
 
 def can_delete(task):
-    """Pode excluir: quem criou ou um admin."""
+    #Pode excluir: quem criou ou um admin.
     return current_user.role == 'admin' or task.created_by == current_user.id
 
+def can_delete_user(target):
+    #Admin exclui qualquer conta; cada usuário pode excluir a própria.
+    return current_user.role == 'admin' or current_user.id == target.id
 
 @app.context_processor
 def inject_globals():
@@ -54,9 +57,10 @@ def inject_globals():
         PRIORIDADES=PRIORIDADES,
         can_edit=can_edit,
         can_delete=can_delete,
+        can_delete_user=can_delete_user
     )
 
-#---------------------------------ROTAS----------------------------------------
+#======================= ROTAS =================================
 
 @app.route('/')
 def home():
@@ -64,11 +68,13 @@ def home():
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
+#---------------ver contatos------------------------
 @app.route('/contatos')
 @login_required
 def contatos():
     return render_template('contatos.html', users=all_users())
 
+#-----------------------login----------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -84,7 +90,7 @@ def login():
 
     return render_template('login.html')
 
-#------formatar telefone-----------
+#-------------formatar telefone pra guardar no banco -----------------
 def normalize_phone(raw):
     """Devolve só os dígitos (DDD + número) se for válido, senão None."""
     digits = re.sub(r'\D', '', raw or '')
@@ -122,6 +128,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
+#-------------------------formatar telefone na hora de exibir ----------------------
 @app.template_filter('telefone')
 def format_phone(d):
     if not d:
@@ -159,15 +166,14 @@ def dashboard():
 
     return render_template('dashboard.html', board=board)
 
-#------------------TAREFAS------------------
-
+#------------------------ler data----------------------
 def parse_date(texto):
     try:
         return datetime.strptime(texto, '%Y-%m-%d').date()
     except (ValueError, TypeError):
         return None
 
-
+#------------------------ler formulario----------------------
 def read_task_form(form):
     """Lê e valida o formulário. Retorna (valores, prazo, mensagem_de_erro)."""
     values = {campo: form.get(campo, '').strip() for campo in
@@ -190,11 +196,11 @@ def read_task_form(form):
 
     return values, deadline, error
 
-
+#-----------------------listar usuarios----------------------
 def all_users():
     return User.query.order_by(User.username).all()
 
-
+#-----------------------adicionar tarefa----------------------
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -222,7 +228,16 @@ def add_task():
 
     return render_template('add_task.html', values=values, users=all_users())
 
+#-----------------------visualizar tarefa----------------------
+@app.route('/task/<int:task_id>')
+@login_required
+def view_task(task_id):
+    """Devolve só o conteúdo do modal (task.html), carregado via fetch no painel."""
+    task = db.get_or_404(Task, task_id)
+    creator = db.session.get(User, task.created_by)
+    return render_template('task.html', task=task, creator=creator)
 
+#-----------------------editar tarefa----------------------
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
@@ -253,7 +268,7 @@ def edit_task(task_id):
 
     return render_template('edit_task.html', task=task, values=values, users=all_users())
 
-
+#-----------------------deletar tarefa----------------------
 @app.route('/delete/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def delete_task(task_id):
@@ -272,7 +287,53 @@ def delete_task(task_id):
     # GET: mostra a tela de confirmação (delete.html)
     return render_template('delete.html', task=task)
 
+#-----------------------deletar usuario----------------------
 
+@app.route('/user/<int:user_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_user(user_id):
+    target = db.get_or_404(User, user_id)
+
+    if not can_delete_user(target):
+        flash('Acesso negado', 'danger')
+        return redirect(url_for('dashboard'))
+
+    # nunca deixar o sistema sem nenhum administrador
+    if target.role == 'admin' and User.query.filter_by(role='admin').count() <= 1:
+        flash('Não é possível excluir o único administrador.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    is_self = target.id == current_user.id
+
+    if request.method == 'POST':
+        username = target.username
+        if is_self:
+            logout_user()  # encerra a sessão antes de apagar a conta
+        remove_user(target)
+        if is_self:
+            flash('Sua conta foi excluída.', 'success')
+            return redirect(url_for('login'))
+        flash(f'Usuário {username} excluído.', 'success')
+        return redirect(url_for('contatos'))
+
+    n_tasks = tasks_of(target).count()
+    return render_template('delete_user.html', target=target, is_self=is_self, n_tasks=n_tasks)
+
+#------------------- tarefas do usuário -----------------------
+
+def tasks_of(user):
+    #Tarefas criadas por ele ou atribuídas a ele.
+    return Task.query.filter(or_(Task.created_by == user.id, Task.assigned_to == user.id))
+
+def remove_user(user):
+    #Apaga o usuário e todas as tarefas que ele criou ou que foram atribuídas a ele.
+    tasks_of(user).delete(synchronize_session=False)
+    db.session.expire_all()
+    db.session.delete(user)
+    db.session.commit()
+
+
+#========================= RODAR APP ========================
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

@@ -22,7 +22,13 @@
             </div>
         </div>
     </div>
-    
+    <!-------botao de excluir contato(pra admins)---------->
+    <div class="d-flex justify-content-between align-items-start">
+        <h5 class="card-title">{{ u.username }}{% if u.id == current_user.id %} <small class="text-muted">(você)</small>{% endif %}</h5>
+        {% if current_user.role == 'admin' and u.id != current_user.id %}
+        <a href="{{ url_for('delete_user', user_id=u.id) }}" class="btn btn-sm btn-outline-danger">Excluir</a>
+        {% endif %}
+    </div>
     {% endfor %}
 </div>
 
