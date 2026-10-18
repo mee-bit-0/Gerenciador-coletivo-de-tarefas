@@ -505,7 +505,7 @@ body {
 }
 
 .custom-modal::backdrop {
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--mShadow);
   backdrop-filter: blur(2px);
 }
 
