@@ -3,35 +3,36 @@
 
 {% block content %}
 
-<h2 class="mb-3">Contatos</h2>
+<h2 class="page-title">Contatos</h2>
 
-<div class="row g-3">
+<div class="contacts-grid">
 
     {% for u in users %}
-    <div class="col-12 col-md-6 col-lg-4">
-        <div class="card">
-            <div class="card-body">
+    <section class="card contact-card">
 
-                <!-------botao de excluir contato(pra admins)---------->
-                <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="card-title">{{ u.username }}{% if u.id == current_user.id %} <small class="text-muted">(você)</small>{% endif %}</h5>
-                    {% if current_user.role == 'admin' and u.id != current_user.id %}
-                    <a href="{{ url_for('delete_user', user_id=u.id) }}" class="btn btn-sm btn-outline-danger">Excluir</a>
-                    {% endif %}
-                </div>
+        <div class="contact-card-header">
+            <!-------usuário---------->
+            <h3 class="contact-name">{{ u.username }}{% if u.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</h3>
 
-                <p class="card-text mb-0">
-                    Telefone:
-                    {% if u.telefone %}
-                        {{ u.telefone|telefone }}
-                    {% else %}
-                        <span class="text-muted">não informado</span>
-                    {% endif %}
-                </p>
-            </div>
+            <!-------botao de excluir contato(pra admins)---------->
+            {% if current_user.role == 'admin' and u.id != current_user.id %}
+            <a href="{{ url_for('delete_user', user_id=u.id) }}" class="button button-danger button-small">Excluir</a>
+            {% endif %}
         </div>
-    </div>
+
+        <!-------telefone---------->
+        <p class="contact-phone">
+            Telefone:
+            {% if u.telefone %}
+                {{ u.telefone|telefone }}
+            {% else %}
+                <span class="muted-text">não informado</span>
+            {% endif %}
+        </p>
+
+    </section>
     {% endfor %}
+
 </div>
 
 {% endblock %}

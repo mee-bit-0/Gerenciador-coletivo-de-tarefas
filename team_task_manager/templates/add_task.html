@@ -2,10 +2,17 @@
 {% block title %}Nova tarefa{% endblock %}
 {% block content %}
 
-<h2 class="mb-3">Nova tarefa</h2>
-<form method="POST">
-    {% include "campos_task.html" %}
-    <button class="btn btn-primary">Adicionar tarefa</button>
-    <a href="{{ url_for('dashboard') }}" class="cancel">Cancelar</a>
-</form>
+<section class="card">
+    <h2 class="page-title">Nova tarefa</h2>
+
+    <form method="POST">
+        {% include "campos_task.html" %}
+
+        <div class="form-actions">
+            <button type="submit" class="button button-primary">Adicionar tarefa</button>
+            <a href="{{ url_for('dashboard') }}" class="button button-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+
 {% endblock %}

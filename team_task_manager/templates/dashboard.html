@@ -2,9 +2,8 @@
 {% block title %}Painel de tarefas{% endblock %}
 {% block container_class %}container container-wide{% endblock %}
 {% block content %}
-
-{# Cartão de uma tarefa. `status` é o status efetivo (inclui Atrasada). #}
 {% macro task_card(task, status) %}
+
 <div class="task-card {{ STATUS_CSS[status] }}">
 
     <div class="task-card-header">
@@ -27,8 +26,10 @@
     </div>
 
 </div>
+
 {% endmacro %}
 
+<!-----------Cabeçalho do painel de tarefas----------->
 <div class="dashboard-header">
     <h2 class="page-title">Tarefas da equipe</h2>
     <a href="{{ url_for('add_task') }}" class="button button-primary">Nova tarefa</a>
@@ -40,6 +41,7 @@
     {% endfor %}
 </div>
 
+<!-------- Conteúdo do painel -------->
 {% for item in board %}
 <section class="card user-board">
     <div class="user-board-header">
