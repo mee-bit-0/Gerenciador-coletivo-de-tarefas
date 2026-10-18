@@ -17,18 +17,6 @@ body {
   margin: 0;
 }
 
-linha-horizontal {
-  /*margem: cima, direita, baixo, esquerda*/
-  margin: 12px 0px 12px 0px;
-  padding-bottom: 2px;
-  border: none;
-  border-top: 2px solid var(--mOutline);
-  height: 2px;
-  width: 100%;
-  background-color: var(--mOutline);
-  margin: 0;
-}
-
 /* =====================================================================
    Estrutura da página
    ===================================================================== */
@@ -43,12 +31,12 @@ linha-horizontal {
 
 .divisoria-horizontal {
   border: none;
-  border-top: 2px solid var(--mOutline);
-  padding:2px, 2px;
+  border-top: 0px solid var(--mOutline);
   height: 2px;
   width: 100%;
   background-color: var(--mOutline);
-  margin: 0;
+  /*margem: cima, direita, baixo, esquerda*/
+  margin: 12px 0px 12px 0px;
 }
 
 .header {
@@ -484,7 +472,8 @@ linha-horizontal {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 10px;
-  font-size: 0.8rem;
+  margin-top: 4px;
+  font-size: 0.9rem;
 }
 
 /* Etiqueta de prioridade */
@@ -503,10 +492,11 @@ linha-horizontal {
 /* =====================================================================
    Janela (modal) de detalhes da tarefa
    ===================================================================== */
+
 .custom-modal {
   background: var(--mSurfaceVariant);
   color: var(--mOnSurface);
-  border: 1px solid var(--mOutline);
+  border: 1px solid var(--mOnSurfaceVariant);
   border-radius: 0px;
   padding: 0;
   max-width: 520px;
@@ -577,8 +567,10 @@ linha-horizontal {
   font-size: 0.95rem;
 }
 
-.task-full-description {
-  margin: 0;
+.task-full-description-text {
+  margin: 1px 0 8px 0;
+  border-top: 1px solid var(--mOutline);
+  padding: 8px 0 0 0;
   white-space: pre-wrap;
   word-break: break-word;
 }

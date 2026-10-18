@@ -29,3 +29,33 @@
     --darkBlue: #45636f;
     --darkGreen:#718964;
 }
+
+.kemuri-koke-light{ /*cores ainda não alteradas*/
+    --mPrimary: #8ba37e;
+    --mOnPrimary: #242120;
+    --mSecondary: #a69680;
+    --mOnSecondary: #242120;
+    --mTertiary: #cb9168;
+    --mOnTertiary: #242120;
+    --mError: #c6685d;
+    --mOnError: #242120;
+    --mSurface: #242120;
+    --mOnSurface: #e5dec9;
+    --mSurfaceVariant: #36312f;
+    --mOnSurfaceVariant: #e5dec9;
+    --mOutline: #665c58;
+    --mShadow: #000000;
+    --mHover: #8ba37e;
+    --mOnHover: #242120;
+    --black: #242120;
+    --red: #c6685d;
+    --darkRed: #a44035;
+    --green: #8ba37e;
+    --yellow: #cb9168;
+    --blue: #67808a;
+    --magenta: #a27886;
+    --cyan: #769f93;
+    --white: #e5dec9;
+    --darkBlue: #45636f;
+    --darkGreen:#718964;
+}

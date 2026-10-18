@@ -21,6 +21,8 @@
         <span class="status-label">
             <span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}
         </span>
+    </div>
+    <div class="task-info">
         <span>Prazo: <strong>{{ task.deadline.strftime('%d/%m/%Y') }}</strong></span>
         <span class="priority-tag {{ PRIORITY_CSS[task.priority] }}">{{ task.priority }}</span>
     </div>
