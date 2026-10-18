@@ -33,6 +33,7 @@ class User(db.Model, UserMixin): # Define a classe usuário
     username = db.Column(db.String(150), unique = True, nullable= False)
     password = db.Column(db.String(150), nullable=False)
     role = db.Column(db.String(10), default = 'membro') # Administrador ou membro
+    telefone = db.Column(db.String(20), nullable=False)
 
 #---------------------------------Tarefa----------------------------------------------
 

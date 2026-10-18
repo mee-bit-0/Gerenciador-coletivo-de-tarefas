@@ -5,6 +5,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
 from models import User, Task, STATUS_ORDER, STATUS_EDITAVEIS, STATUS_CSS, PRIORIDADES, PENDENTE
+import re
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -63,6 +64,10 @@ def home():
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
+@app.route('/contatos')
+@login_required
+def contatos():
+    return render_template('contatos.html', users=all_users())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,13 +84,28 @@ def login():
 
     return render_template('login.html')
 
+#------formatar telefone-----------
+def normalize_phone(raw):
+    """Devolve só os dígitos (DDD + número) se for válido, senão None."""
+    digits = re.sub(r'\D', '', raw or '')
+    if digits.startswith('55') and len(digits) in (12, 13):  # aceita +55
+        digits = digits[2:]
+    if re.fullmatch(r'[1-9]{2}(9\d{8}|[2-5]\d{7})', digits):
+        return digits
+    return None
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username'].strip()
         password = generate_password_hash(request.form['password'])
+        phone = normalize_phone(request.form.get('phone'))
         role = request.form.get('role', 'member')
+
+        if phone is None:
+            flash('Telefone inválido! Informe DDD e número.', 'danger')
+            return redirect(url_for('register'))
 
         if not username:
             flash('Informe um nome de usuário!', 'danger')
@@ -95,12 +115,20 @@ def register():
             flash('Nome de usuário já existe!', 'danger')
             return redirect(url_for('register'))
 
-        new_user = User(username=username, password=password, role=role)
+        new_user = User(username=username, password=password, role=role, telefone=phone)
         db.session.add(new_user)
         db.session.commit()
         flash('Registrou com sucesso!', 'success')
         return redirect(url_for('login'))
     return render_template('register.html')
+
+@app.template_filter('telefone')
+def format_phone(d):
+    if not d:
+        return ''
+    if len(d) == 11:
+        return f'({d[:2]}) {d[2:7]}-{d[7:]}'
+    return f'({d[:2]}) {d[2:6]}-{d[6:]}'
 
 @app.route('/logout')
 @login_required  # só quem está logado pode usar

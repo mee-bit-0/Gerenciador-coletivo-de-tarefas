@@ -16,6 +16,8 @@
         <ul class="navbar-nav ms-auto">
             {% if current_user.is_authenticated %}
                 <li class="nav-item"><span class="navbar-text me-3">Olá, {{ current_user.username }}</span></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Painel</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('contatos') }}">Contatos</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Sair</a></li>
             {% else %}
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Entrar</a></li>

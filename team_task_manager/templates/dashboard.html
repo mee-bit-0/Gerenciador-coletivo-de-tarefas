@@ -2,7 +2,7 @@
 {% block title %}Painel de tarefas{% endblock %}
 {% block content %}
 
-{# Cartão de uma tarefa. `status` é o status efetivo (inclui Atrasada). #}
+
 {% macro task_card(task, status) %}
 <div class="task-card border-{{ STATUS_CSS[status]|replace('dot-', '') }}">
     <div class="task-title">{{ task.title }}</div>
