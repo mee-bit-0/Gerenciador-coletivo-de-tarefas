@@ -3,21 +3,33 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="form">
-    <h1 class="h3 mb-3">Login</h1>
+<section class="card form-page">
+    <h2 class="page-title">Login</h2>
 
+    <!--============================== FORMULARIO DE LOGIN ============================-->
     <form method="POST">
-        <div class="mb-3">
+        <!----------------------Usuário------------------------>
+        <div class="form-field">
             <label for="username" class="form-label">Usuário</label>
-            <input type="text" id="username" name="username" class="form-control" required>
+            <input type="text" id="username" name="username" class="form-input" required>
         </div>
-        <div class="mb-3">
+
+        <!----------------------Senha------------------------>
+        <div class="form-field">
             <label for="password" class="form-label">Senha</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <input type="password" id="password" name="password" class="form-input" required>
         </div>
-        <button type="submit" class="btn btn-primary">Entrar</button>
+
+        <!--botão entrar-->
+        <button type="submit" class="button button-primary">Entrar</button>
+
     </form>
 
-    <p class="mt-3">Não possui conta? <a class="btn btn-link" href="{{ url_for('register') }}">Registre-se</a></p>
-</div>
+    <div class="link-question">
+        <span>Não possui conta?</span>
+        <!--botão de encaminhamento pro registro-->
+        <a href="{{ url_for('register') }}" class="button button-secondary button-small">Registre-se</a>
+    </div>
+    
+</section>
 {% endblock %}

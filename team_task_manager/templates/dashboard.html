@@ -1,103 +1,113 @@
 {% extends "base.html" %}
 {% block title %}Painel de tarefas{% endblock %}
-{% block container_class %}container-xxl{% endblock %}
+{% block container_class %}container container-wide{% endblock %}
 {% block content %}
 
-
+{# Cartão de uma tarefa. `status` é o status efetivo (inclui Atrasada). #}
 {% macro task_card(task, status) %}
-<div class="task-card border-{{ STATUS_CSS[status]|replace('dot-', '') }}">
-   
-    <div class="d-flex justify-content-between align-items-start gap-2">
-    <div class="task-title">{{ task.title }}</div>
-        <button type="button" class="btn btn-sm btn-light border btn-task-details"
-            data-url="{{ url_for('view_task', task_id=task.id) }}"
-            title="Ver detalhes" aria-label="Ver detalhes">&hellip;</button>
+<div class="task-card {{ STATUS_CSS[status] }}">
+
+    <div class="task-card-header">
+        <div class="task-title">{{ task.title }}</div>
+        <button type="button" class="button-details"
+                data-details-url="{{ url_for('view_task', task_id=task.id) }}"
+                title="Ver detalhes" aria-label="Ver detalhes">&hellip;</button>
     </div>
 
     {% if task.description %}
-    <div class="task-desc">{{ task.description|truncate(90) }}</div>
+    <div class="task-description">{{ task.description|truncate(90) }}</div>
     {% endif %}
-    <div class="task-meta">
-        <span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}
-        &middot; Prazo: <strong>{{ task.deadline.strftime('%d/%m/%Y') }}</strong>
-        &middot;
-        <span class="badge {% if task.priority == 'Alta' %}bg-danger{% elif task.priority == 'Média' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ task.priority }}</span>
+
+    <div class="task-info">
+        <span class="status-label">
+            <span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}
+        </span>
+        <span>Prazo: <strong>{{ task.deadline.strftime('%d/%m/%Y') }}</strong></span>
+        <span class="priority-tag {{ PRIORITY_CSS[task.priority] }}">{{ task.priority }}</span>
     </div>
-    
+
 </div>
 {% endmacro %}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Tarefas da equipe</h2>
-    <a href="{{ url_for('add_task') }}" class="btn btn-primary">Nova tarefa</a>
+<div class="dashboard-header">
+    <h2 class="page-title">Tarefas da equipe</h2>
+    <a href="{{ url_for('add_task') }}" class="button button-primary">Nova tarefa</a>
 </div>
 
-<div class="legend mb-4 small">
+<div class="status-legend">
     {% for status in STATUS_ORDER %}
-    <span><span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}</span>
+    <span class="status-label"><span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}</span>
     {% endfor %}
 </div>
 
 {% for item in board %}
-<div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <strong>{{ item.user.username }}{% if item.user.id == current_user.id %} (você){% endif %}</strong>
-        <span class="badge bg-dark">{{ item.total }} tarefa{{ 's' if item.total != 1 }}</span>
+<section class="card user-board">
+    <div class="user-board-header">
+        <span class="user-name">{{ item.user.username }}{% if item.user.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</span>
+        <span class="task-count">{{ item.total }} tarefa{{ 's' if item.total != 1 }}</span>
     </div>
-    <div class="card-body">
-        <div class="row g-5">
-            {% for status in STATUS_ORDER %}
-            <div class="col-12 col-md-6 col-xl-3 status-col">
-                <h6 class="d-flex align-items-center mb-3">
-                    <span class="dot {{ STATUS_CSS[status] }}"></span>{{ status }}
-                    <span class="text-muted ms-1">({{ item.columns[status]|length }})</span>
-                </h6>
-                {% for task in item.columns[status] %}
-                    {{ task_card(task, status) }}
-                {% else %}
-                    <p class="text-muted small">Nenhuma tarefa</p>
-                {% endfor %}
-            </div>
+
+    <div class="status-columns">
+        {% for status in STATUS_ORDER %}
+        <div class="status-column">
+            <h3 class="status-column-title">
+                <span class="status-dot {{ STATUS_CSS[status] }}"></span>{{ status }}
+                <span class="status-column-count">({{ item.columns[status]|length }})</span>
+            </h3>
+
+            {% for task in item.columns[status] %}
+                {{ task_card(task, status) }}
+            {% else %}
+                <p class="muted-text">Nenhuma tarefa</p>
             {% endfor %}
         </div>
+        {% endfor %}
     </div>
-</div>
+</section>
 {% else %}
-<div class="alert alert-info">
-    Ainda não há tarefas.
-</div>
+<section class="card">
+    <p class="empty-message">Ainda não há tarefas.</p>
+</section>
 {% endfor %}
 
-<!---------------------------- Modal para detalhes da tarefa ------------------------------>
+<!---------------------------- Janela (modal) de detalhes da tarefa ------------------------------>
 
-<div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" id="taskModalContent"></div>
-    </div>
-</div>
+<dialog id="task-modal" class="custom-modal">
+    <div id="task-modal-content"></div>
+</dialog>
 
-<!----------Script para modal de detalhes da tarefa---------->
+<!----------Script da janela de detalhes da tarefa---------->
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const modal = new bootstrap.Modal(document.getElementById('taskModal'));
-    const content = document.getElementById('taskModalContent');
+    const taskModal = document.getElementById("task-modal");
+    const taskModalContent = document.getElementById("task-modal-content");
 
-    document.querySelectorAll('.btn-task-details').forEach(function (btn) {
-        btn.addEventListener('click', async function () {
-            content.innerHTML = '<div class="modal-body text-center py-5"><div class="spinner-border"></div></div>';
-            modal.show();
-            try {
-                const resp = await fetch(btn.dataset.url);
-                if (resp.redirected) { window.location.href = resp.url; return; }  // sessão expirou
-                if (!resp.ok) throw new Error();
-                content.innerHTML = await resp.text();
-            } catch (e) {
-                content.innerHTML = '<div class="modal-body">Não foi possível carregar a tarefa.</div>';
+    async function openTaskModal(detailsUrl) {
+        taskModalContent.innerHTML = '<p class="modal-loading">Carregando...</p>';
+        taskModal.showModal();
+        try {
+            const response = await fetch(detailsUrl);
+            if (response.redirected) {          // sessão expirou: vai para o login
+                window.location.href = response.url;
+                return;
             }
-        });
+            if (!response.ok) throw new Error("Falha ao carregar a tarefa");
+            taskModalContent.innerHTML = await response.text();
+        } catch (error) {
+            taskModalContent.innerHTML = '<p class="modal-loading">Não foi possível carregar a tarefa.</p>';
+        }
+    }
+
+    document.querySelectorAll("[data-details-url]").forEach((detailsButton) => {
+        detailsButton.addEventListener("click", () => openTaskModal(detailsButton.dataset.detailsUrl));
     });
-});
+
+    taskModal.addEventListener("click", (event) => {
+        // botões "Fechar" (carregados junto com o conteúdo) ou clique no fundo escuro
+        if (event.target.closest("[data-close-modal]") || event.target === taskModal) {
+            taskModal.close();
+        }
+    });
 </script>
 
 {% endblock %}

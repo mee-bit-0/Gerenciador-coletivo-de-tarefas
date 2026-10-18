@@ -3,28 +3,32 @@
 {% block title %}Registro{% endblock %}
 
 {% block content %}
-<div class="form">
-    <h1 class="h3 mb-3">Registro</h1>
+<section class="card form-page">
+    <h2 class="page-title">Registro</h2>
 
+    <!--============================== FORMULARIO DE REGISTRO ============================-->
     <form method="POST">
-        <!----------------------------Usuário------------------------->
-        <div class="mb-3">
+        <!-------------------------------- Usuario ----------------------------->
+        <div class="form-field">
             <label for="username" class="form-label">Usuário</label>
-            <input type="text" id="username" name="username" class="form-control" required>
+            <input type="text" id="username" name="username" class="form-input" required>
         </div>
-        <!------------------------------Senha------------------------->
-        <div class="mb-3">
+
+        <!--------------------------- Senha ---------------------------->
+        <div class="form-field">
             <label for="password" class="form-label">Senha</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <input type="password" id="password" name="password" class="form-input" required>
         </div>
+
         <!----------------------------Telefone------------------------->
-        <div class="mb-3">
+        <div class="form-field">
             <label for="telefone" class="form-label">Telefone</label>
-                <input type="tel" id="telefone" name="phone" class="form-control"
-                    placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15"
-                    pattern="\(\d{2}\) \d{4,5}-\d{4}" title="Use o formato (00) 00000-0000"
-                    required>
+            <input type="tel" id="telefone" name="phone" class="form-input"
+                   placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15"
+                   pattern="\(\d{2}\) \d{4,5}-\d{4}" title="Use o formato (00) 00000-0000"
+                   required>
         </div>
+
         <!--Formatação automatica do telefone na visualização-->
         <script>
         document.getElementById('telefone').addEventListener('input', function () {
@@ -38,7 +42,7 @@
         </script>
 
         <!---------------------------Tipo de conta-------------------------->
-        <div class="mb-3">
+        <div class="form-field">
             <label for="role" class="form-label">Tipo de conta</label>
             <select id="role" name="role" class="form-select">
                 <option value="member">Membro</option>
@@ -46,9 +50,16 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Registrar</button>
+        <!--botão registrar-->
+        <button type="submit" class="button button-primary">Registrar</button>
+    
     </form>
 
-    <p class="mt-3">Já possui uma conta? <a class="btn btn-link" href="{{ url_for('login') }}">Entrar</a></p>
-</div>
+    <div class="link-question">
+        <span>Já possui uma conta?</span>
+        <!--botão de encaminhamento pro login-->
+        <a href="{{ url_for('login') }}" class="button button-secondary button-small">Entrar</a>
+    </div>
+    
+</section>
 {% endblock %}

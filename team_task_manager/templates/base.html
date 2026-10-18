@@ -1,61 +1,78 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="kemuri-koke-dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Team Task Manager{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <title>{% block title %}Gerenciador Coletivo de Tarefas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{{ url_for('home') }}">Gerenciador de Tarefas</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
+<main class="{% block container_class %}container{% endblock %}">
+
+    <!-------------------cabeçalho e menu------------------>
+    <header class="header">
+        <h1 class="logo">
+            <a href="{{ url_for('home') }}" class="logo-link">➤ Gerenciador Coletivo de Tarefas ✓</a>
+        </h1>
+
+        <nav class="main-menu">
             {% if current_user.is_authenticated %}
+
                 <!----------páginas---------->
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Tarefas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('contatos') }}">Contatos</a></li>
+                <a href="{{ url_for('dashboard') }}" class="button button-secondary">Tarefas</a>
+                <a href="{{ url_for('contatos') }}" class="button button-secondary">Contatos</a>
+
                 <!-------- opções do usuário -------->
-                <li class="nav-item dropdown">
-                    <button class="btn btn-outline-light btn-sm dropdown-toggle ms-lg-2" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Olá, {{ current_user.username }}
-                    </button>
-                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{{ url_for('delete_user', user_id=current_user.id) }}">Excluir conta</a></li>
-                    </ul>
-                </li>
-                
+                <details class="dropdown">
+                    <summary class="button button-secondary">Olá, {{ current_user.username }} ▾</summary>
+                    <div class="dropdown-menu">
+                        <a href="{{ url_for('logout') }}" class="dropdown-item">Sair</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('delete_user', user_id=current_user.id) }}" class="dropdown-item dropdown-item-danger">Excluir conta</a>
+                    </div>
+                </details>
+
             {% else %}
 
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Entrar</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Registrar</a></li>
+                <a href="{{ url_for('login') }}" class="button button-secondary">Entrar</a>
+                <a href="{{ url_for('register') }}" class="button button-secondary">Registrar</a>
 
             {% endif %}
-        </ul>
-    </div>
-</nav>
+        </nav>
+    </header>
 
-<!-------------------container/conteudo------------------>
-
-<div class="{% block container_class %}container{% endblock %} mt-4 mb-5">
+    <!-------------------mensagens------------------>
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
+        {% if messages %}
+        <ul class="flash">
+            {% for category, message in messages %}
+            <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     {% endwith %}
+
+    <!-------------------conteúdo da página------------------>
     {% block content %}{% endblock %}
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</main>
+
+<footer class="footer">
+    <small>Feito por Aimée Cavalcante, Gustavo Lisboa, Antônio Neto</small>
+</footer>
+
+<script>
+    // Fecha qualquer menu suspenso aberto quando clicar fora dele
+    document.addEventListener("click", (event) => {
+        document.querySelectorAll("details.dropdown").forEach((dropdown) => {
+            if (!dropdown.contains(event.target)) {
+                dropdown.removeAttribute("open");
+            }
+        });
+    });
+</script>
+
 </body>
-
 </html>
