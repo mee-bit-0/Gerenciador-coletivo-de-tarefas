@@ -24,7 +24,7 @@
 
     <form action="{{ url_for('delete_user', user_id=target.id) }}" method="POST">
         <div class="form-actions">
-            <button type="submit" class="button button-danger">Sim, excluir</button>
+            <button type="submit" class="button button-danger">Excluir</button>
             <a href="{{ url_for('contatos' if not is_self else 'dashboard') }}" class="button button-secondary">Cancelar</a>
         </div>
     </form>

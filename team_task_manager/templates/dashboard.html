@@ -32,7 +32,9 @@
 <!-----------Cabeçalho do painel de tarefas----------->
 <div class="dashboard-header">
     <h2 class="page-title">Tarefas da equipe</h2>
+    
     <a href="{{ url_for('add_task') }}" class="button button-primary">Nova tarefa</a>
+    
 </div>
 
 <div class="status-legend">
@@ -44,11 +46,12 @@
 <!-------- Conteúdo do painel -------->
 {% for item in board %}
 <section class="card user-board">
+    <!---------Cabeçalho do quadro do usuário---------->
     <div class="user-board-header">
         <span class="user-name">{{ item.user.username }}{% if item.user.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</span>
         <span class="task-count">{{ item.total }} tarefa{{ 's' if item.total != 1 }}</span>
     </div>
-
+    <!---------Colunas de status das tarefas---------->
     <div class="status-columns">
         {% for status in STATUS_ORDER %}
         <div class="status-column">
@@ -68,7 +71,7 @@
 </section>
 {% else %}
 <section class="card">
-    <p class="empty-message">Ainda não há tarefas.</p>
+    <p class="empty-message">Nada a fazer por aqui.</p>
 </section>
 {% endfor %}
 
