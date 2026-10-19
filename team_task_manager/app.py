@@ -14,6 +14,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Cria banco em team_task_manager/instance/database.db
 app = Flask(__name__, instance_path=os.path.join(BASE_DIR, 'instance'))
+# Baixa = 0, Média = 1, Alta = 2
+PESO_PRIORIDADE = {p: i for i, p in enumerate(PRIORIDADES)}
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'senha1234')  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -188,6 +190,7 @@ def logout():
 @login_required
 def dashboard():
     tasks = Task.query.order_by(Task.deadline.asc(), Task.id.asc()).all()
+    tasks.sort(key=lambda t: PESO_PRIORIDADE.get(t.priority, -1), reverse= True)
     users = User.query.all()
 
     # O próprio usuário aparece primeiro, depois os outros em ordem alfabética
