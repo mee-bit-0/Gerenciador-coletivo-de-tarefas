@@ -35,7 +35,7 @@
                 <a href="{{ url_for('contatos') }}" class="button button-secondary">Contatos</a>
 
                 <!-------- botao trocar tema -------->
-                <button type="button" id="theme-toggle" class="button button-secondary" aria-label="Alternar tema"></button>
+                <button type="button" id="theme-toggle" class="button theme-button button-secondary" aria-label="Alternar tema"></button>
 
                 <!-------- opções do usuário -------->
                 <details class="dropdown">
@@ -180,7 +180,7 @@
 
     function atualizarBotaoTema() {
         const claro = raiz.classList.contains("kemuri-koke-light");
-        botaoTema.textContent = claro ? "☾ Tema escuro" : "☀ Tema claro";
+        botaoTema.textContent = claro ? "◐" : "◑";
     }
 
     botaoTema.addEventListener("click", () => {

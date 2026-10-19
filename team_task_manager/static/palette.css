@@ -33,7 +33,8 @@
 .kemuri-koke-light{ /*cores ainda não alteradas*/
     --mPrimary: #6c782e;
     --mOnPrimary: #fbf1c7;
-    --mSecondary: #b47109;
+    --mSecondary: #987d57;
+    /*--mSecondary: #b47109;*/
     --mOnSecondary: #fbf1c7;
     --mTertiary: #45707a;
     --mOnTertiary: #fbf1c7;
