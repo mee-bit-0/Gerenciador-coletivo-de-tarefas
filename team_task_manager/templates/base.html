@@ -159,5 +159,27 @@
     });
 </script>
 
+<!-- ===== NOVO: funcionalidade botão de tema ===== -->
+<script>
+    // Alterna entre tema escuro e claro e guarda a escolha neste navegador
+    const botaoTema = document.getElementById("theme-toggle");
+    const raiz = document.documentElement;
+
+    function atualizarBotaoTema() {
+        const claro = raiz.classList.contains("kemuri-koke-light");
+        botaoTema.textContent = claro ? "☾ Tema escuro" : "☀ Tema claro";
+    }
+
+    botaoTema.addEventListener("click", () => {
+        const vaiParaClaro = raiz.classList.contains("kemuri-koke-dark");
+        raiz.classList.toggle("kemuri-koke-dark", !vaiParaClaro);
+        raiz.classList.toggle("kemuri-koke-light", vaiParaClaro);
+        try { localStorage.setItem("tema", vaiParaClaro ? "light" : "dark"); } catch (e) {}
+        atualizarBotaoTema();
+    });
+
+    atualizarBotaoTema();
+</script>
+
 </body>
 </html>
