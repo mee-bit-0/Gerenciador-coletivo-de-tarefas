@@ -27,7 +27,9 @@
     --cyan: #769f93;
     --white: #e5dec9;
     --darkBlue: #45636f;
-    --darkGreen:#718964;
+    --darkGreen:#618051;
+    --diretor:#67808a;
+    --admin:#8ba37e;
 }
 
 .kemuri-koke-light{ /*cores ainda não alteradas*/
@@ -59,5 +61,7 @@
     --cyan: #4c7a5d;
     --white: #fbf1c7;
     --darkBlue: #45636f;
-    --darkGreen:#718964;
+    --darkGreen:#5a6427;
+    --diretor:#45707a;
+    --admin:#6c782e;
 }

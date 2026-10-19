@@ -98,8 +98,8 @@ body {
 }
 
 .flash li.flash-success {
-  background: var(--green);
-  border-color: var(--darkGreen);
+  background: var(--blue);
+  border-color: var(--darkBlue);
   color: var(--mOnPrimary);
 }
 
@@ -147,7 +147,8 @@ body {
 }
 
 .button-primary:hover {
-  background: var(--mPrimary);
+  background: var(--darkGreen);
+  outline: solid var(--mPrimary);
   filter: brightness(1.1);
 }
 
@@ -164,10 +165,11 @@ body {
 .button-danger {
   background: var(--mError);
   color: var(--mOnError);
+  border-color: var(--darkRed);
 }
 
 .button-danger:hover {
-  background: var(--mError);
+  background: var(--darkRed);
   outline: 2px solid var(--red);
 }
 
@@ -185,9 +187,9 @@ body {
   align-items: center;
   justify-content: center;
   padding: 0px 0px 9px 0px;
-  border: 2px solid var(--mOutline);
-  background: var(--mSecondary);
-  color: var(--mOnSecondary);
+  border: 2px solid var(--darkGreen);
+  background: var(--mPrimary);
+  color: var(--mOnPrimary);
   font-size: 1rem;
   font-weight: 700;
   line-height: 1;
@@ -195,7 +197,7 @@ body {
 }
 
 .button-details:hover {
-  background: var(--mSecondary);
+  background: var(--darkGreen);
   outline: 2px solid var(--mPrimary);
 }
 
@@ -269,8 +271,12 @@ body {
 .page-title {
   /*margem: cima, direita, baixo, esquerda*/
   margin: 10px 0px 16px 0px;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
+}
+
+.titulo-contatos {
+  margin-top: 19px;
 }
 
 .muted-text { opacity: 0.6; }
@@ -304,14 +310,25 @@ body {
   padding: 1px 8px;
   font-size: 0.75rem;
   font-weight: 700;
-  background: var(--mTertiary);
-  color: var(--mOnTertiary);
+  background: var(--diretor);
+  color: var(--mOnPrimary);
 }
 
 .role-label-admin {
-  background: var(--mSecondary);
+  background: var(--admin);
   color: var(--mOnSecondary);
 }
+
+.role-dot {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 0%;
+  flex-shrink: 0;
+}
+
+.dot-admin   { background-color: var(--admin); }
+.dot-diretor { background-color: var(--diretor); }
 
 /* =====================================================================
    Formulários
@@ -629,6 +646,24 @@ body {
 /* =====================================================================
    Contatos
    ===================================================================== */
+
+.contacts-section { margin-bottom: 28px; }
+
+.contacts-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--mOutline);
+}
+
+.contacts-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
 .contacts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -653,6 +688,10 @@ body {
 }
 
 .contact-phone { margin: 0; }
+
+.drop-contato {
+  margin-top: -16px;
+}
 
 /* =====================================================================
    Telas pequenas
