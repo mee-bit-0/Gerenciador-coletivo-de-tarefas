@@ -34,6 +34,9 @@
                 <a href="{{ url_for('dashboard') }}" class="button button-secondary">Tarefas</a>
                 <a href="{{ url_for('contatos') }}" class="button button-secondary">Contatos</a>
 
+                <!-------- botao trocar tema -------->
+                <button type="button" id="theme-toggle" class="button button-secondary" aria-label="Alternar tema"></button>
+
                 <!-------- opções do usuário -------->
                 <details class="dropdown">
                     <summary class="button button-secondary">Olá, {{ current_user.username }} ▾</summary>
@@ -50,8 +53,6 @@
                 <a href="{{ url_for('register') }}" class="button button-secondary">Registrar</a>
 
             {% endif %}
-                <!-------- botao trocar tema -------->
-                <button type="button" id="theme-toggle" class="button button-secondary" aria-label="Alternar tema"></button>
         </nav>
     </header>
 
