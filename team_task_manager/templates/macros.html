@@ -1,0 +1,8 @@
+{# Etiqueta do nível de acesso ao lado do nome do usuário (membros não têm etiqueta) #}
+{% macro role_label(user) -%}
+    {%- if user.role == 'diretor' -%}
+        <span class="role-label role-label-diretor">Diretor</span>
+    {%- elif user.role == 'admin' -%}
+        <span class="role-label role-label-admin">Admin</span>
+    {%- endif -%}
+{%- endmacro %}

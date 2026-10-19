@@ -1,0 +1,27 @@
+<!--=================== MODAL PROMOVER USUARIO =====================-->
+
+<form action="{{ url_for('promote_user', user_id=target.id) }}" method="POST" data-modal-form>
+
+    <div class="modal-header">
+        <h3 class="modal-title">Promover usuário</h3>
+        <button type="button" class="button button-secondary button-small" data-close-modal aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <p>Tem certeza que deseja promover <strong>{{ target.username }}</strong> a administrador?</p>
+
+        <div class="warning-message">
+            Administradores podem editar e excluir qualquer tarefa e excluir contas de outros usuários.
+            Só o diretor pode retirar essa permissão depois.
+        </div>
+    </div>
+
+    <div class="modal-actions">
+        <div class="modal-actions-group"></div>
+        <div class="modal-actions-group">
+            <button type="button" class="button button-secondary" data-close-modal>Cancelar</button>
+            <button type="submit" class="button button-primary">Promover</button>
+        </div>
+    </div>
+
+</form>

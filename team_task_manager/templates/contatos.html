@@ -1,21 +1,58 @@
 {% extends "base.html" %}
+{% from "macros.html" import role_label %}
 {% block title %}Contatos{% endblock %}
 {% block content %}
 
-<h2 class="page-title">Contatos</h2>
+<h2 class="page-title titulo-contatos">Contatos</h2>
 
+{# uma seção por cargo; "Membros" inclui qualquer um que não seja diretor nem admin #}
+{% set secoes = [
+    ('Diretor', users|selectattr('role', 'equalto', 'diretor')|list),
+    ('Administradores', users|selectattr('role', 'equalto', 'admin')|list),
+    ('Membros', users|rejectattr('role', 'in', ['diretor', 'admin'])|list),
+] %}
+
+{% for titulo, lista in secoes if lista %}
+<div class="contacts-section">
+<div class="contacts-section-header">
+    
+    <!-- dot de cargo -->
+    {% if titulo == 'Diretor' %}
+        <span class="role-dot dot-diretor"></span>
+    {% elif titulo == 'Administradores' %}
+        <span class="role-dot dot-admin"></span>
+    {% endif %}
+    
+    <h3 class="contacts-section-title">{{ titulo }} <span class="muted-text">({{ lista|length }})</span></h3>
+    
+
+</div>
 <div class="contacts-grid">
 
-    {% for u in users %}
+    {% for u in lista %}
     <section class="card contact-card">
 
         <div class="contact-card-header">
             <!-------usuário---------->
             <h3 class="contact-name">{{ u.username }}{% if u.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</h3>
 
-            <!-------botao de excluir contato(pra admins)---------->
-            {% if current_user.role == 'admin' and u.id != current_user.id %}
-            <a href="{{ url_for('delete_user', user_id=u.id) }}" class="button button-danger button-small" data-modal>Excluir</a>
+            <!-------menu de ações (só aparece se houver alguma ação permitida)---------->
+            {% if u.id != current_user.id and (can_promote(u) or can_demote(u) or can_delete_user(u)) %}
+            <details class="dropdown drop-contato">
+                <summary class="button button-secondary button-details">...</summary>
+                <div class="dropdown-menu">
+                    {% if can_promote(u) %}
+                    <a href="{{ url_for('promote_user', user_id=u.id) }}" class="dropdown-item" data-modal>Promover a admin</a>
+                    {% endif %}
+                    {% if can_demote(u) %}
+                    <a href="{{ url_for('demote_user', user_id=u.id) }}" class="dropdown-item" data-modal>Remover admin</a>
+                    {% endif %}
+                    {% if can_delete_user(u) %}
+                    {% if can_promote(u) or can_demote(u) %}<div class="dropdown-divider"></div>{% endif %}
+                    <a href="{{ url_for('delete_user', user_id=u.id) }}" class="dropdown-item dropdown-item-danger" data-modal>Excluir</a>
+                    {% endif %}
+                </div>
+            </details>
             {% endif %}
         </div>
 
@@ -33,5 +70,7 @@
     {% endfor %}
 
 </div>
+</div>
+{% endfor %}
 
 {% endblock %}

@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Gerenciador Coletivo de Tarefas{% endblock %}</title>
+    <script>
+    // Aplica o tema salvo antes de a página aparecer (evita piscar o tema errado)
+    (function () {
+        try {
+            if (localStorage.getItem("tema") === "light") {
+                document.documentElement.classList.replace("kemuri-koke-dark", "kemuri-koke-light");
+            }
+        } catch (e) {}
+    })();
+</script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -24,13 +34,19 @@
                 <a href="{{ url_for('dashboard') }}" class="button button-secondary">Tarefas</a>
                 <a href="{{ url_for('contatos') }}" class="button button-secondary">Contatos</a>
 
+                <!-------- botao trocar tema -------->
+                <button type="button" id="theme-toggle" class="button theme-button button-secondary" aria-label="Alternar tema"></button>
+
                 <!-------- opções do usuário -------->
                 <details class="dropdown">
                     <summary class="button button-secondary">Olá, {{ current_user.username }} ▾</summary>
                     <div class="dropdown-menu">
+                        <a href="{{ url_for('edit_profile') }}" class="dropdown-item" data-modal>Editar dados</a>
                         <a href="{{ url_for('logout') }}" class="dropdown-item">Sair</a>
+                        {% if not is_diretor(current_user) %}
                         <div class="dropdown-divider"></div>
                         <a href="{{ url_for('delete_user', user_id=current_user.id) }}" class="dropdown-item dropdown-item-danger" data-modal>Excluir conta</a>
+                        {% endif %}
                     </div>
                 </details>
 
@@ -133,6 +149,17 @@
         if (event.submitter) event.submitter.disabled = true;   // evita envio duplicado
         loadModal(form.action, { method: "POST", body: new FormData(form) });
     });
+
+    // Formata o telefone enquanto digita (funciona para campos carregados dentro da janela)
+    modalDialog.addEventListener("input", (event) => {
+        if (event.target.name !== "phone") return;
+        let d = event.target.value.replace(/\D/g, "").slice(0, 11);
+        if (d.length > 10)      event.target.value = `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+        else if (d.length > 6)  event.target.value = `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+        else if (d.length > 2)  event.target.value = `(${d.slice(0,2)}) ${d.slice(2)}`;
+        else if (d.length > 0)  event.target.value = `(${d}`;
+        else                    event.target.value = "";
+    });
 </script>
 {% endif %}
 
@@ -145,6 +172,28 @@
             }
         });
     });
+</script>
+
+<!-- ===== NOVO: funcionalidade botão de tema ===== -->
+<script>
+    // Alterna entre tema escuro e claro e guarda a escolha neste navegador
+    const botaoTema = document.getElementById("theme-toggle");
+    const raiz = document.documentElement;
+
+    function atualizarBotaoTema() {
+        const claro = raiz.classList.contains("kemuri-koke-light");
+        botaoTema.textContent = claro ? "◐" : "◑";
+    }
+
+    botaoTema.addEventListener("click", () => {
+        const vaiParaClaro = raiz.classList.contains("kemuri-koke-dark");
+        raiz.classList.toggle("kemuri-koke-dark", !vaiParaClaro);
+        raiz.classList.toggle("kemuri-koke-light", vaiParaClaro);
+        try { localStorage.setItem("tema", vaiParaClaro ? "light" : "dark"); } catch (e) {}
+        atualizarBotaoTema();
+    });
+
+    atualizarBotaoTema();
 </script>
 
 </body>

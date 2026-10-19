@@ -6,8 +6,11 @@
 :root {
   font-family: -apple-system, Segoe UI, sans-serif;
   font-weight: 500;
-  color-scheme: dark;
 }
+
+/* Avisa o navegador qual é o tema*/
+.kemuri-koke-dark  { color-scheme: dark; }
+.kemuri-koke-light { color-scheme: light; }
 
 * { box-sizing: border-box; }
 
@@ -95,8 +98,8 @@ body {
 }
 
 .flash li.flash-success {
-  background: var(--green);
-  border-color: var(--darkGreen);
+  background: var(--blue);
+  border-color: var(--darkBlue);
   color: var(--mOnPrimary);
 }
 
@@ -144,8 +147,14 @@ body {
 }
 
 .button-primary:hover {
-  background: var(--mPrimary);
+  background: var(--darkGreen);
+  outline: solid var(--mPrimary);
   filter: brightness(1.1);
+}
+
+.theme-button {
+  font-size: 1.2rem;
+  padding: 7.5px 15px;
 }
 
 .button-secondary {
@@ -156,10 +165,11 @@ body {
 .button-danger {
   background: var(--mError);
   color: var(--mOnError);
+  border-color: var(--darkRed);
 }
 
 .button-danger:hover {
-  background: var(--mError);
+  background: var(--darkRed);
   outline: 2px solid var(--red);
 }
 
@@ -170,15 +180,16 @@ body {
 
 .button-details {
   width: 30px;
-  height: 30px;
+  height: 20px;
+  text-align: center;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  border: 2px solid var(--mOutline);
-  background: var(--mSecondary);
-  color: var(--mOnSecondary);
+  padding: 0px 0px 9px 0px;
+  border: 2px solid var(--darkGreen);
+  background: var(--mPrimary);
+  color: var(--mOnPrimary);
   font-size: 1rem;
   font-weight: 700;
   line-height: 1;
@@ -186,7 +197,7 @@ body {
 }
 
 .button-details:hover {
-  background: var(--mSecondary);
+  background: var(--darkGreen);
   outline: 2px solid var(--mPrimary);
 }
 
@@ -260,8 +271,12 @@ body {
 .page-title {
   /*margem: cima, direita, baixo, esquerda*/
   margin: 10px 0px 16px 0px;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
+}
+
+.titulo-contatos {
+  margin-top: 19px;
 }
 
 .muted-text { opacity: 0.6; }
@@ -288,6 +303,32 @@ body {
   gap: 8px;
   margin-top: 16px;
 }
+
+.role-label {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--diretor);
+  color: var(--mOnPrimary);
+}
+
+.role-label-admin {
+  background: var(--admin);
+  color: var(--mOnSecondary);
+}
+
+.role-dot {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 0%;
+  flex-shrink: 0;
+}
+
+.dot-admin   { background-color: var(--admin); }
+.dot-diretor { background-color: var(--diretor); }
 
 /* =====================================================================
    Formulários
@@ -331,7 +372,6 @@ body {
   -webkit-appearance: none;
   appearance: none;                 
   padding-right: 36px;              
-
   background-image:
     linear-gradient(45deg, transparent 50%, var(--mOnSurface) 50%),
     linear-gradient(135deg, var(--mOnSurface) 50%, transparent 50%);
@@ -340,6 +380,11 @@ body {
     calc(100% - 18px) 50%,
     calc(100% - 12px) 50%;          
   background-repeat: no-repeat;
+}
+
+.form-select:hover {
+  background-color: var(--mSurfaceVariant);
+  border-color: var(--mPrimary);
 }
 
 .form-textarea { resize: vertical; }
@@ -601,6 +646,24 @@ body {
 /* =====================================================================
    Contatos
    ===================================================================== */
+
+.contacts-section { margin-bottom: 28px; }
+
+.contacts-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--mOutline);
+}
+
+.contacts-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
 .contacts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -625,6 +688,10 @@ body {
 }
 
 .contact-phone { margin: 0; }
+
+.drop-contato {
+  margin-top: -16px;
+}
 
 /* =====================================================================
    Telas pequenas
