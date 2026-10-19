@@ -6,8 +6,11 @@
 :root {
   font-family: -apple-system, Segoe UI, sans-serif;
   font-weight: 500;
-  color-scheme: dark;
 }
+
+/* Avisa o navegador qual é o tema*/
+.kemuri-koke-dark  { color-scheme: dark; }
+.kemuri-koke-light { color-scheme: light; }
 
 * { box-sizing: border-box; }
 
