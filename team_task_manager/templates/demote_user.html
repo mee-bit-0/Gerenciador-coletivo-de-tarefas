@@ -1,0 +1,26 @@
+<!--=================== MODAL REMOVER ADMIN =====================-->
+
+<form action="{{ url_for('demote_user', user_id=target.id) }}" method="POST" data-modal-form>
+
+    <div class="modal-header">
+        <h3 class="modal-title">Remover administrador</h3>
+        <button type="button" class="button button-secondary button-small" data-close-modal aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <p>Tem certeza que deseja retirar a permissão de administrador de <strong>{{ target.username }}</strong>?</p>
+
+        <div class="warning-message">
+            {{ target.username }} volta a ser membro: só poderá editar e excluir as tarefas que criou ou que foram atribuídas a essa pessoa.
+        </div>
+    </div>
+
+    <div class="modal-actions">
+        <div class="modal-actions-group"></div>
+        <div class="modal-actions-group">
+            <button type="button" class="button button-secondary" data-close-modal>Cancelar</button>
+            <button type="submit" class="button button-danger">Remover</button>
+        </div>
+    </div>
+
+</form>

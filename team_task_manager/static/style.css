@@ -298,6 +298,21 @@ body {
   margin-top: 16px;
 }
 
+.role-label {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--mTertiary);
+  color: var(--mOnTertiary);
+}
+
+.role-label-admin {
+  background: var(--mSecondary);
+  color: var(--mOnSecondary);
+}
+
 /* =====================================================================
    Formulários
    ===================================================================== */
@@ -340,7 +355,6 @@ body {
   -webkit-appearance: none;
   appearance: none;                 
   padding-right: 36px;              
-
   background-image:
     linear-gradient(45deg, transparent 50%, var(--mOnSurface) 50%),
     linear-gradient(135deg, var(--mOnSurface) 50%, transparent 50%);
@@ -349,6 +363,11 @@ body {
     calc(100% - 18px) 50%,
     calc(100% - 12px) 50%;          
   background-repeat: no-repeat;
+}
+
+.form-select:hover {
+  background-color: var(--mSurfaceVariant);
+  border-color: var(--mPrimary);
 }
 
 .form-textarea { resize: vertical; }

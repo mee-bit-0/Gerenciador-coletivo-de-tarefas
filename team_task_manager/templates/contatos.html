@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import role_label %}
 {% block title %}Contatos{% endblock %}
 {% block content %}
 
@@ -11,11 +12,25 @@
 
         <div class="contact-card-header">
             <!-------usuário---------->
-            <h3 class="contact-name">{{ u.username }}{% if u.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}</h3>
+            <h3 class="contact-name">{{ u.username }}{% if u.id == current_user.id %} <span class="current-user-label">(você)</span>{% endif %}{{ role_label(u) }}</h3>
 
-            <!-------botao de excluir contato(pra admins)---------->
-            {% if current_user.role == 'admin' and u.id != current_user.id %}
-            <a href="{{ url_for('delete_user', user_id=u.id) }}" class="button button-danger button-small" data-modal>Excluir</a>
+            <!-------menu de ações (só aparece se houver alguma ação permitida)---------->
+            {% if u.id != current_user.id and (can_promote(u) or can_demote(u) or can_delete_user(u)) %}
+            <details class="dropdown">
+                <summary class="button button-secondary button-details">...</summary>
+                <div class="dropdown-menu">
+                    {% if can_promote(u) %}
+                    <a href="{{ url_for('promote_user', user_id=u.id) }}" class="dropdown-item" data-modal>Promover a admin</a>
+                    {% endif %}
+                    {% if can_demote(u) %}
+                    <a href="{{ url_for('demote_user', user_id=u.id) }}" class="dropdown-item" data-modal>Remover admin</a>
+                    {% endif %}
+                    {% if can_delete_user(u) %}
+                    {% if can_promote(u) or can_demote(u) %}<div class="dropdown-divider"></div>{% endif %}
+                    <a href="{{ url_for('delete_user', user_id=u.id) }}" class="dropdown-item dropdown-item-danger" data-modal>Excluir</a>
+                    {% endif %}
+                </div>
+            </details>
             {% endif %}
         </div>
 

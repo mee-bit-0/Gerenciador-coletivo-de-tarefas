@@ -1,3 +1,4 @@
+{% from "macros.html" import role_label %}
 {% set status = task.effective_status %}
 
 <!--================================ MODAL DA TAREFA ================================-->
@@ -26,11 +27,11 @@
 
         <!-----------------Responsável----------------->
         <dt>Responsável</dt>
-        <dd>{{ task.assignee.username }}</dd>
+        <dd>{{ task.assignee.username }}{{ role_label(task.assignee) }}</dd>
 
         <!-----------------Criada por----------------->
         <dt>Criada por</dt>
-        <dd>{{ creator.username if creator else '—' }}</dd>
+        <dd>{{ creator.username if creator else '—' }}{% if creator %}{{ role_label(creator) }}{% endif %}</dd>
     </dl>
 
     <!-------------Descrição da tarefa-------------->
