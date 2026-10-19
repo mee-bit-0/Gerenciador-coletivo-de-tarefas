@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Gerenciador Coletivo de Tarefas{% endblock %}</title>
+    <script>
+    // Aplica o tema salvo antes de a página aparecer (evita piscar o tema errado)
+    (function () {
+        try {
+            if (localStorage.getItem("tema") === "light") {
+                document.documentElement.classList.replace("kemuri-koke-dark", "kemuri-koke-light");
+            }
+        } catch (e) {}
+    })();
+</script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
