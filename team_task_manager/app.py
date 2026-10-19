@@ -343,6 +343,45 @@ def delete_user(user_id):
     n_tasks = tasks_of(target).count()
     return render_template('delete_user.html', target=target, is_self=is_self, n_tasks=n_tasks)
 
+#-----------------------editar dados do usuário----------------------
+@app.route('/perfil', methods=['GET', 'POST'])
+@login_required
+@modal_only
+def edit_profile():
+    # Valores que aparecem já preenchidos no formulário
+    values = {'username': current_user.username,
+              'phone': format_phone(current_user.telefone)}
+    error = None
+
+    if request.method == 'POST':
+        username = request.form['username'].strip()
+        new_password = request.form.get('password', '')
+        raw_phone = request.form.get('phone', '')
+        phone = normalize_phone(raw_phone)
+
+        # Se der erro, o formulário volta com o que a pessoa digitou
+        values = {'username': username, 'phone': raw_phone}
+
+        other = User.query.filter_by(username=username).first()
+
+        if not username:
+            error = 'Informe um nome de usuário!'
+        elif other and other.id != current_user.id:
+            error = 'Nome de usuário já existe!'
+        elif phone is None:
+            error = 'Telefone inválido! Informe DDD e número.'
+        else:
+            user = db.session.get(User, current_user.id)
+            user.username = username
+            user.telefone = phone
+            if new_password:  # senha em branco = mantém a atual
+                user.password = generate_password_hash(new_password)
+            db.session.commit()
+            flash('Dados atualizados!', 'success')
+            return modal_redirect('dashboard')
+
+    return render_template('edit_profile.html', values=values, error=error)
+
 #------------------- tarefas do usuário -----------------------
 
 def tasks_of(user):
